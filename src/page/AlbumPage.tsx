@@ -1,31 +1,52 @@
 import { useLoaderData } from "react-router-dom";
 import { Play, Pause } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 
 const AlbumPage = () => {
   const album = useLoaderData();
+
+  const [audioSource, setAudioSource] = useState(null);
   const [currentlyPlaying, setCurrentlyPlaying] = useState();
+  const [startTime, setStartTime] = useState(0);
+  const [pausedTime, setPausedTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioContext = new AudioContext();
 
-  const playback = () => {
-    fetch(
-      "https://hzlgizemdlicobkkuowk.supabase.co/storage/v1/object/sign/songs/When%20Im%20Gone.mp3?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJzb25ncy9XaGVuIEltIEdvbmUubXAzIiwiaWF0IjoxNzMyNDQyNTgyLCJleHAiOjE4OTAxMjI1ODJ9.g-PdbbAm97CrYBPgtC4yHFvINmymjvK893Cx4fnZ624&t=2024-11-24T10%3A03%3A02.979Z"
-    )
-      .then((data) => data.arrayBuffer())
-      .then((arrayBuffer) => audioContext.decodeAudioData(arrayBuffer))
-      .then((decodedAudio) => {
-        setCurrentlyPlaying(decodedAudio);
-      });
+  const playAudio = async () => {
     if (!isPlaying) {
-      const playSound = audioContext.createBufferSource();
-      playSound.buffer = currentlyPlaying;
-      playSound.connect(audioContext.destination);
-      playSound.start(audioContext.currentTime);
-      setIsPlaying(true);
+      try {
+        const response = await fetch(
+          "https://hzlgizemdlicobkkuowk.supabase.co/storage/v1/object/sign/songs/When%20Im%20Gone.mp3?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJzb25ncy9XaGVuIEltIEdvbmUubXAzIiwiaWF0IjoxNzMyNDQyNTgyLCJleHAiOjE4OTAxMjI1ODJ9.g-PdbbAm97CrYBPgtC4yHFvINmymjvK893Cx4fnZ624&t=2024-11-24T10%3A03%3A02.979Z"
+        );
+        const arrayBuffer = await response.arrayBuffer();
+        const decodedAudio = await audioContext.decodeAudioData(arrayBuffer);
+
+        const source = audioContext.createBufferSource();
+        source.buffer = decodedAudio;
+        source.connect(audioContext.destination);
+
+        const currentStartTime = audioContext.currentTime;
+        setStartTime(currentStartTime);
+
+        source.start(currentStartTime, pausedTime);
+
+        setAudioSource(source);
+        setCurrentlyPlaying(decodedAudio);
+        setIsPlaying(true);
+      } catch (error) {
+        console.error("Error playing audio:", error);
+      }
     }
-    playSound.stop();
+  };
+
+  const pauseAudio = () => {
+    if (isPlaying && audioSource) {
+      const elapsedTime = audioContext.currentTime - startTime + pausedTime;
+      audioSource.stop();
+      setPausedTime(elapsedTime);
+      setIsPlaying(false);
+    }
   };
 
   return (
@@ -42,9 +63,23 @@ const AlbumPage = () => {
         {album.songs.map((song) => (
           <div
             id="song"
+            key={song.id}
             className="flex flex-row text-white ml-4 mt-4 border-2 items-center"
           >
-            <Button>{isPlaying ? <Play /> : <Pause />}</Button>
+            {!isPlaying ? (
+              <Button
+                key={song.id}
+                onClick={() => {
+                  playAudio();
+                }}
+              >
+                Play
+              </Button>
+            ) : (
+              <Button key={song.id} onClick={pauseAudio}>
+                Pause
+              </Button>
+            )}
             <div id="song-metadata" className="flex flex-col">
               <h1 className="ml-4">{song.title}</h1>
               <h3 className="ml-4">{song.author_id}</h3>

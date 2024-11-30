@@ -14,6 +14,7 @@ export const getAlbum = async ({
             name
         ),
         songs!album_id(
+            id,
             author_id,
             title,
             length
