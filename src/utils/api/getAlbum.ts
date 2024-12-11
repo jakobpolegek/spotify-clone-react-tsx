@@ -15,9 +15,13 @@ export const getAlbum = async ({
         ),
         songs!album_id(
             id,
-            author_id,
+            authors:author_id (
+              id,
+              name
+            ),
             title,
-            length
+            length,
+            source
         )`
     )
     .eq("id", albumId)
