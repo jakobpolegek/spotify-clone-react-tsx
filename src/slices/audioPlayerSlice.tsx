@@ -104,6 +104,51 @@ export const pauseAudio = () => (dispatch, getState) => {
   }
 };
 
+export const seekAudio = createAsyncThunk(
+  "audioPlayer/seekAudio",
+  (newTime: number, { getState, dispatch }) => {
+    const state = getState() as { audioPlayer: AudioPlayerState };
+      if (currentAudioSource) {
+      try {
+        currentAudioSource.stop();
+      } catch (error) {}
+    }
+
+    if (currentTimeInterval) {
+      clearInterval(currentTimeInterval);
+    }
+
+    dispatch(audioPlayerSlice.actions.setPausedTime(newTime));
+    dispatch(audioPlayerSlice.actions.setCurrentTime(newTime));
+
+    if (currentAudioBuffer) {
+      const source = audioContext.createBufferSource();
+      source.buffer = currentAudioBuffer;
+      source.connect(audioContext.destination);
+
+      const startTime = audioContext.currentTime;
+
+      source.start(startTime, newTime);
+      currentAudioSource = source;
+      currentTimeInterval = setInterval(() => {
+        const currentTime = newTime + (audioContext.currentTime - startTime);
+
+        if (currentTime >= currentAudioBuffer.duration) {
+          dispatch(audioPlayerSlice.actions.setIsPlaying(false));
+          dispatch(audioPlayerSlice.actions.setCurrentTime(0));
+          dispatch(audioPlayerSlice.actions.setPausedTime(0));
+        } else {
+          dispatch(audioPlayerSlice.actions.setCurrentTime(currentTime));
+        }
+      }, 1000);
+
+      if (state.audioPlayer.isPlaying) {
+        dispatch(audioPlayerSlice.actions.setIsPlaying(true));
+      }
+    }
+  }
+);
+
 const audioPlayerSlice = createSlice({
   name: "audioPlayer",
   initialState: {

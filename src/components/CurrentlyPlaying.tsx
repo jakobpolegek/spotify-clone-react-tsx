@@ -5,16 +5,14 @@ const CurrentlyPlaying = () => {
   const currentlyPlaying = useSelector(selectCurrentlyPlaying);
 
   return (
-    <div className="flex flex-row items-end  w-auto mb-2">
+    <div className="flex flex-row items-end mb-2 w-64">
       {currentlyPlaying.cover ? (
         <img
-          width="60"
-          height="60"
-          className="m-1 ml-5"
+          className="m-1 ml-5 w-16 h-16"
           src={currentlyPlaying.cover}
         />
       ) : (
-        <div></div>
+        <></>
       )}
       <div id="song" className="flex flex-col items-start mx-2 mb-2">
         {currentlyPlaying ? (

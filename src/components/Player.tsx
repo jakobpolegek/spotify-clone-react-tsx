@@ -12,6 +12,7 @@ import {
   selectCurrentTime,
   selectDuration,
   setCurrentTime,
+  seekAudio
 } from "../slices/audioPlayerSlice";
 
 const Player = () => {
@@ -43,13 +44,15 @@ const Player = () => {
     }
   };
 
-  const handleSliderChange = (value) => {
-    const newTime = (value[0] / 100) * duration;
-    dispatch(setCurrentTime(newTime));
+  const handleSliderChange = (value: number[]) => {
+    if (value && value.length > 0) {
+      const newTime = (value[0] / 100) * duration;
+      dispatch(seekAudio(newTime));
+    }
   };
 
   return (
-    <div className="col-span-10 mt-auto bg-slate-900">
+    <div className="col-span-10 mt-auto bg-slate-900 w-50">
       <div className="flex">
         <CurrentlyPlaying />
         <div className="flex flex-col justify-center items-center mb-3 grow mr-24">
