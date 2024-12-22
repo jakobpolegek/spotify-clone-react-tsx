@@ -3,6 +3,7 @@ import AudioContextService from "../utils/audioContextService";
 import AudioPlayerState from "../types/AudioPlayerState";
 
 const audioContext = AudioContextService.getInstance();
+const gainNode = AudioContextService.getGainNode();
 
 let currentAudioSource: AudioBufferSourceNode | null = null;
 let currentAudioBuffer: AudioBuffer | null = null;
@@ -36,22 +37,21 @@ export const playAudio = createAsyncThunk(
       }
 
       if (currentAudioSource) {
-        try {
-          currentAudioSource.stop();
-        } catch (error) {}
+        currentAudioSource.stop();
       }
 
       const source = audioContext.createBufferSource();
       source.buffer = audioBuffer;
-      source.connect(audioContext.destination);
-
+      source.connect(gainNode);
       const state = getState() as { audioPlayer: AudioPlayerState };
       const pausedTime = state.audioPlayer.pausedTime || 0;
       const startTime = audioContext.currentTime;
 
       source.start(startTime, pausedTime);
-
       currentAudioSource = source;
+
+      const { volume, isMuted } = state.audioPlayer;
+      AudioContextService.toggleMute(isMuted, volume);
 
       if (currentTimeInterval) {
         clearInterval(currentTimeInterval);
@@ -108,7 +108,7 @@ export const seekAudio = createAsyncThunk(
   "audioPlayer/seekAudio",
   (newTime: number, { getState, dispatch }) => {
     const state = getState() as { audioPlayer: AudioPlayerState };
-      if (currentAudioSource) {
+    if (currentAudioSource) {
       try {
         currentAudioSource.stop();
       } catch (error) {}
@@ -124,9 +124,12 @@ export const seekAudio = createAsyncThunk(
     if (currentAudioBuffer) {
       const source = audioContext.createBufferSource();
       source.buffer = currentAudioBuffer;
-      source.connect(audioContext.destination);
+      source.connect(gainNode);
 
       const startTime = audioContext.currentTime;
+
+      const { volume, isMuted } = state.audioPlayer;
+      AudioContextService.toggleMute(isMuted, volume);
 
       source.start(startTime, newTime);
       currentAudioSource = source;
@@ -153,6 +156,8 @@ const audioPlayerSlice = createSlice({
   name: "audioPlayer",
   initialState: {
     isPlaying: false,
+    volume: 70,
+    isMuted: false,
     currentlyPlaying: {
       authors: {
         id: null,
@@ -168,6 +173,19 @@ const audioPlayerSlice = createSlice({
     duration: 0,
   } as AudioPlayerState,
   reducers: {
+    setVolume: (state, action) => {
+      state.volume = action.payload;
+      state.isMuted = false;
+      if (currentAudioSource) {
+        AudioContextService.setVolume(action.payload);
+      }
+    },
+    toggleMute: (state) => {
+      state.isMuted = !state.isMuted;
+      if (currentAudioSource) {
+        AudioContextService.toggleMute(state.isMuted, state.volume);
+      }
+    },
     setCurrentlyPlaying: (state, action) => {
       state.currentlyPlaying = action.payload;
     },
@@ -231,16 +249,15 @@ export const {
   setIsPlaying,
   setCurrentTime,
   setCurrentlyPlaying,
+  setVolume,
+  toggleMute,
 } = audioPlayerSlice.actions;
 
 export default audioPlayerSlice.reducer;
-
-export const selectIsPlaying = (state: { audioPlayer: AudioPlayerState }) =>
-  state.audioPlayer.isPlaying;
-export const selectCurrentlyPlaying = (state: {
-  audioPlayer: AudioPlayerState;
-}) => state.audioPlayer.currentlyPlaying;
-export const selectCurrentTime = (state: { audioPlayer: AudioPlayerState }) =>
-  state.audioPlayer.currentTime;
-export const selectDuration = (state: { audioPlayer: AudioPlayerState }) =>
-  state.audioPlayer.duration;
+export const selectIsPlaying = (state) => state.audioPlayer.isPlaying;
+export const selectCurrentlyPlaying = (state) =>
+  state.audioPlayer.currentlyPlaying;
+export const selectCurrentTime = (state) => state.audioPlayer.currentTime;
+export const selectDuration = (state) => state.audioPlayer.duration;
+export const selectVolume = (state) => state.audioPlayer.volume;
+export const selectIsMuted = (state) => state.audioPlayer.isMuted;

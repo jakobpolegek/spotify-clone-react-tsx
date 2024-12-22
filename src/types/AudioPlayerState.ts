@@ -1,5 +1,7 @@
 export interface AudioPlayerState {
   isPlaying: boolean;
+  volume: number;
+  isMuted: boolean;
   currentlyPlaying: {
     authors: {
       id: number;
