@@ -1,6 +1,5 @@
 import { useLoaderData } from "react-router-dom";
 import { Play, Pause } from "lucide-react";
-import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -19,6 +18,7 @@ const AlbumPage = () => {
   const handlePlay = (song) => {
     try {
       if (song) {
+        console.log(currentlyPlaying);
         dispatch(playAudio({ ...song, cover: album.cover }));
       }
     } catch (error) {
@@ -51,12 +51,13 @@ const AlbumPage = () => {
             key={song.id}
             className="flex flex-row text-white ml-4 mt-4 items-center"
           >
-            {currentlyPlaying === song.source && isPlaying ? (
-              <Button onClick={handlePause}>
+            {isPlaying && currentlyPlaying.id === song.id ? (
+              <Button variant="link" onClick={handlePause}>
                 <Pause />
               </Button>
             ) : (
               <Button
+                variant="link"
                 onClick={() => {
                   handlePlay(song);
                 }}
