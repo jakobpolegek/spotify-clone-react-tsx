@@ -1,16 +1,12 @@
+import { ISong } from "./ISong";
+
 export interface AudioPlayerState {
   isPlaying: boolean;
   volume: number;
   isMuted: boolean;
-  currentlyPlaying: {
-    authors: {
-      id: number;
-      name: string;
-    };
-    cover: string;
-    title: string;
-    songUrl: string;
-  } | null;
+  currentlyPlaying: ISong | null;
+  queue: ISong[];
+  history: ISong[];
   startTime: number;
   pausedTime: number;
   currentTime: number;

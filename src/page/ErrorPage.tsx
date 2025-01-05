@@ -7,12 +7,12 @@ const ErrorPage = () => {
   const code = error?.status || "404";
   const message = error?.message || "Not found.";
   return (
-    <section className="flex flex-col justify-center items-center h-96 m-auto text-white text-center">
+    <section className="bg-black flex flex-col justify-center items-center m-auto text-white text-center">
       <FaTriangleExclamation className="text-yellow-400 text-6xl" />
       <h1 className="my-4 text-6xl font-bold mb-4">{code}</h1>
       <p className="text-xl mb-5">{message}</p>
       <Link
-        to="/"
+        to=""
         className="text-white bg-indigo-700 hover:bg-indigo-900 rounded-md px-3 py-2 mt-4"
       >
         Go Back
