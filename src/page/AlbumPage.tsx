@@ -1,36 +1,64 @@
 import { useLoaderData } from "react-router-dom";
 import { Play, Pause } from "lucide-react";
-import { useState } from "react";
 import { Button } from "../components/ui/button";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  pauseAudio,
+  playAudio,
+  selectIsPlaying,
+  selectCurrentlyPlaying,
+  addToQueue,
+  selectQueue,
+} from "../slices/audioPlayerSlice";
+import { IAlbum } from "../types/IAlbum";
+import { ISong } from "../types/ISong";
 
 const AlbumPage = () => {
-  const album = useLoaderData();
-  const [currentlyPlaying, setCurrentlyPlaying] = useState();
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioContext = new AudioContext();
+  const album = useLoaderData() as IAlbum;
+  const dispatch = useDispatch();
+  const isPlaying = useSelector(selectIsPlaying);
+  const currentlyPlaying = useSelector(selectCurrentlyPlaying);
+  const queue = useSelector(selectQueue);
 
-  const playback = () => {
-    fetch(
-      "https://hzlgizemdlicobkkuowk.supabase.co/storage/v1/object/sign/songs/When%20Im%20Gone.mp3?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJzb25ncy9XaGVuIEltIEdvbmUubXAzIiwiaWF0IjoxNzMyNDQyNTgyLCJleHAiOjE4OTAxMjI1ODJ9.g-PdbbAm97CrYBPgtC4yHFvINmymjvK893Cx4fnZ624&t=2024-11-24T10%3A03%3A02.979Z"
-    )
-      .then((data) => data.arrayBuffer())
-      .then((arrayBuffer) => audioContext.decodeAudioData(arrayBuffer))
-      .then((decodedAudio) => {
-        setCurrentlyPlaying(decodedAudio);
-      });
-    if (!isPlaying) {
-      const playSound = audioContext.createBufferSource();
-      playSound.buffer = currentlyPlaying;
-      playSound.connect(audioContext.destination);
-      playSound.start(audioContext.currentTime);
-      setIsPlaying(true);
+  const handlePlay = (song: ISong) => {
+    try {
+      if (song) {
+        dispatch(
+          playAudio({
+            ...song,
+            author: album.authors,
+            cover: album.cover,
+          })
+        );
+      }
+
+      if ((!queue || queue.length < 1) && album.songs) {
+        album.songs.forEach((song) => {
+          dispatch(
+            addToQueue({
+              ...song,
+              author: album.authors,
+              cover: album.cover,
+            })
+          );
+        });
+      }
+    } catch (error) {
+      throw new Error(`An error occurred trying to play this song:`, error);
     }
-    playSound.stop();
+  };
+
+  const handlePause = () => {
+    try {
+      dispatch(pauseAudio());
+    } catch (error) {
+      throw new Error("Error pausing song:", error);
+    }
   };
 
   return (
-    <div className="col-span-7 row-span-11">
-      <div id="album-header" className="flex bg-slate-300 text-white">
+    <div className="col-span-7 row-span-11 h-[calc(100vh-200px)] overflow-y-auto">
+      <div id="album-header" className="flex bg-slate-800 text-white">
         <img src={album.cover} className="h-60 w-60 m-4 ml-12 mt-12" />
         <div id="album-metadata" className="flex flex-col mt-auto mb-10">
           Album
@@ -39,15 +67,31 @@ const AlbumPage = () => {
         </div>
       </div>
       <div id="songs" className="flex flex-col">
-        {album.songs.map((song) => (
+        {album.songs?.map((song) => (
           <div
             id="song"
-            className="flex flex-row text-white ml-4 mt-4 border-2 items-center"
+            key={song.title}
+            className="flex flex-row text-white ml-4 mt-4 items-center"
           >
-            <Button>{isPlaying ? <Play /> : <Pause />}</Button>
-            <div id="song-metadata" className="flex flex-col">
-              <h1 className="ml-4">{song.title}</h1>
-              <h3 className="ml-4">{song.author_id}</h3>
+            {isPlaying && currentlyPlaying.title === song.title ? (
+              <Button variant="link" onClick={handlePause}>
+                <Pause />
+              </Button>
+            ) : (
+              <Button
+                variant="link"
+                onClick={() => {
+                  handlePlay(song);
+                }}
+              >
+                <Play />
+              </Button>
+            )}
+            <div id="song-metadata" className="flex flex-col ml-4">
+              <h1>
+                {song.title.replace(/^[0-9]{2}\s-\s/, "").replace(/\.mp3$/, "")}
+              </h1>
+              <h3>{album.authors.name}</h3>
             </div>
           </div>
         ))}
