@@ -1,6 +1,6 @@
 import { ISong } from "./ISong";
 
-export interface AudioPlayerState {
+export interface IAudioPlayerState {
   isPlaying: boolean;
   volume: number;
   isMuted: boolean;

@@ -12,47 +12,46 @@ import {
 } from "../slices/audioPlayerSlice";
 import { IAlbum } from "../types/IAlbum";
 import { ISong } from "../types/ISong";
+import { AppDispatch } from "../store";
 
 const AlbumPage = () => {
   const album = useLoaderData() as IAlbum;
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const isPlaying = useSelector(selectIsPlaying);
   const currentlyPlaying = useSelector(selectCurrentlyPlaying);
-  const queue = useSelector(selectQueue);
+  const queue: ISong[] = useSelector(selectQueue);
 
   const handlePlay = (song: ISong) => {
     try {
       if (song) {
-        dispatch(
-          playAudio({
-            ...song,
-            author: album.authors,
-            cover: album.cover,
-          })
-        );
+        const modifiedSong: ISong = {
+          ...song,
+          authors: album.authors,
+          cover: album.cover,
+        };
+        dispatch(playAudio(modifiedSong));
       }
 
       if ((!queue || queue.length < 1) && album.songs) {
         album.songs.forEach((song) => {
-          dispatch(
-            addToQueue({
-              ...song,
-              author: album.authors,
-              cover: album.cover,
-            })
-          );
+          const modifiedSong: ISong = {
+            ...song,
+            authors: album.authors,
+            cover: album.cover,
+          };
+          dispatch(addToQueue(modifiedSong));
         });
       }
-    } catch (error) {
-      throw new Error(`An error occurred trying to play this song:`, error);
+    } catch (error: any) {
+      throw new Error(`An error occurred trying to play this song:` + error);
     }
   };
 
   const handlePause = () => {
     try {
       dispatch(pauseAudio());
-    } catch (error) {
-      throw new Error("Error pausing song:", error);
+    } catch (error: any) {
+      throw new Error("Error pausing song:" + error);
     }
   };
 
@@ -63,7 +62,9 @@ const AlbumPage = () => {
         <div id="album-metadata" className="flex flex-col mt-auto mb-10">
           Album
           <h1 className="text-8xl font-extrabold mt-2"> {album.title}</h1>
-          <h3 className="mt-0"> {album.authors.name}</h3>
+          <h3 className="mt-0">
+            {album.authors.map((author) => author.name).join(", ")}
+          </h3>
         </div>
       </div>
       <div id="songs" className="flex flex-col">
@@ -73,7 +74,7 @@ const AlbumPage = () => {
             key={song.title}
             className="flex flex-row text-white ml-4 mt-4 items-center"
           >
-            {isPlaying && currentlyPlaying.title === song.title ? (
+            {isPlaying && currentlyPlaying?.title === song.title ? (
               <Button variant="link" onClick={handlePause}>
                 <Pause />
               </Button>
@@ -91,7 +92,9 @@ const AlbumPage = () => {
               <h1>
                 {song.title.replace(/^[0-9]{2}\s-\s/, "").replace(/\.mp3$/, "")}
               </h1>
-              <h3>{album.authors.name}</h3>
+              <h3 className="text-gray-400">
+                {album.authors.map((author) => author.name).join(", ")}
+              </h3>
             </div>
           </div>
         ))}

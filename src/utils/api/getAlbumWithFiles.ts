@@ -2,33 +2,50 @@ import { supabase } from "../supabase";
 import { LoaderFunctionArgs } from "react-router-dom";
 
 export const getAlbumWithFiles = async ({
-  params: { authorId, albumId },
+  params: { albumId },
 }: LoaderFunctionArgs): Promise<any> => {
   try {
-    const { data: album } = await supabase
+    const { data: initialAlbum } = await supabase
       .from("albums")
       .select(
         `
         id,
-        created_at,
+        createdAt:created_at,
         title,
-        bucket_folder_name,
+        bucketFolderName: bucket_folder_name
+        `
+      )
+      .eq("id", albumId)
+      .single();
+
+    if (!initialAlbum) {
+      throw new Error(`Album does not exist.`);
+    }
+
+    const { data: albumWithAuthors } = await supabase
+      .from("albums")
+      .select(
+        `
+        id,
+        createdAt:created_at,
+        title,
+        bucketFolderName:bucket_folder_name,
         authors:author_id (
           id,
           name
         )`
       )
-      .eq("id", albumId)
-      .eq("author_id", authorId)
-      .single();
+      .eq("bucket_folder_name", initialAlbum.bucketFolderName);
 
-    if (!album) {
-      throw new Error(`Album does not exist.`);
+    if (!albumWithAuthors || albumWithAuthors.length === 0) {
+      throw new Error(`Album data could not be retrieved.`);
     }
+
+    const authors = albumWithAuthors.map((album) => album.authors);
 
     const { data: storageFiles, error: storageError } = await supabase.storage
       .from("songs")
-      .list(album.bucket_folder_name, {
+      .list(initialAlbum.bucketFolderName, {
         limit: 100,
         offset: 0,
         sortBy: { column: "name", order: "asc" },
@@ -48,8 +65,8 @@ export const getAlbumWithFiles = async ({
 
     let coverUrl = null;
     if (coverFile) {
-      const coverPath = album.bucket_folder_name
-        ? `${album.bucket_folder_name}/${coverFile.name}`
+      const coverPath = initialAlbum.bucketFolderName
+        ? `${initialAlbum.bucketFolderName}/${coverFile.name}`
         : coverFile.name;
       const { data: signedUrlData } = await supabase.storage
         .from("songs")
@@ -61,13 +78,13 @@ export const getAlbumWithFiles = async ({
       storageFiles
         .filter((item) => item.metadata?.mimetype && item !== coverFile)
         .map(async (file) => {
-          const filePath = `${album.bucket_folder_name}/${file.name}`;
+          const filePath = `${initialAlbum.bucketFolderName}/${file.name}`;
           const { data: signedUrlData, error: signedUrlError } =
             await supabase.storage
               .from("songs")
               .createSignedUrl(filePath, 18000);
           if (signedUrlError) {
-            console.error("Error creating signed URL:", signedUrlError);
+            throw new Error("Error creating signed URL: " + signedUrlError);
           }
 
           return {
@@ -78,16 +95,16 @@ export const getAlbumWithFiles = async ({
     );
 
     return {
-      id: album.id,
+      id: albumId,
       cover: coverUrl,
-      created_at: album.created_at,
-      title: album.title,
-      bucketFolderName: album.bucketFolderName,
-      authors: album.authors,
+      createdAt: initialAlbum.createdAt,
+      title: initialAlbum.title,
+      bucketFolderName: initialAlbum.bucketFolderName,
+      authors: authors,
       songs,
     };
   } catch (error) {
-    console.error("Error fetching album data:", error);
+    throw new Error("Error fetching album data: " + error);
     throw error;
   }
 };

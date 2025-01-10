@@ -1,7 +1,7 @@
 import { IAuthor } from "./IAuthor";
 
 export interface ISong {
-  author?: IAuthor;
+  authors?: IAuthor[];
   cover?: string;
   title: string;
   source: string;

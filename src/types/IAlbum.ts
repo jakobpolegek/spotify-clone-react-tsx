@@ -3,10 +3,10 @@ import { ISong } from "./ISong";
 
 export interface IAlbum {
   id: number;
-  authors: IAuthor;
+  authors: IAuthor[];
   bucketFolderName: string;
   cover: string;
-  created_at: string;
+  createdAt: string;
   title: string;
   songs?: ISong[];
 }

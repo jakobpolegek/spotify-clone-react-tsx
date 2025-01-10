@@ -1,8 +1,18 @@
 import { useSelector } from "react-redux";
 import { selectCurrentlyPlaying } from "../slices/audioPlayerSlice";
+import { IAuthor } from "../types/IAuthor";
 
 const CurrentlyPlaying = () => {
   const currentlyPlaying = useSelector(selectCurrentlyPlaying);
+  const artistNames = currentlyPlaying?.authors
+    ? currentlyPlaying.authors
+        .map((author: IAuthor) => author.name)
+        .reduce((acc: string, name: string, index: number, array: string[]) => {
+          if (index === 0) return name;
+          if (index === array.length - 1) return `${acc}, ${name}`;
+          return `${acc}, ${name}`;
+        }, "")
+    : "";
 
   return (
     <div className="flex flex-row items-end mb-2 max-w-500">
@@ -20,7 +30,7 @@ const CurrentlyPlaying = () => {
                 .replace(/\.mp3$/, "")}
             </h3>
             <h3 id="artist" className="text-gray-300">
-              {currentlyPlaying?.author?.name}
+              {artistNames}
             </h3>
           </div>
         </>
