@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { FaTriangleExclamation } from "react-icons/fa6";
 import { useRouteError } from "react-router-dom";
+import { IRouteError } from "../types/IRouteError";
 
 const ErrorPage = () => {
-  const error = useRouteError();
+  const error = useRouteError() as IRouteError;
   const code = error?.status || "404";
   const message = error?.message || "Not found.";
   return (

@@ -6,7 +6,7 @@ import {
   SignInButton,
   UserButton,
 } from "@clerk/clerk-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const userButtonAppearance = {
   elements: {

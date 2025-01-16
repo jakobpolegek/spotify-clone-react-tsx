@@ -26,9 +26,6 @@ import {
   toggleMute,
   selectVolume,
   selectIsMuted,
-  selectNextSong,
-  selectPreviousSong,
-  selectQueue,
 } from "../slices/audioPlayerSlice";
 
 const Player = () => {
@@ -53,7 +50,7 @@ const Player = () => {
 
   const handlePlay = () => {
     try {
-      dispatch(playAudio());
+      dispatch(playAudio(null));
     } catch (error) {
       throw new Error(`An error occurred trying to play this song.`);
     }
