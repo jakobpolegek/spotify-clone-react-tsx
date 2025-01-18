@@ -47,7 +47,16 @@ const router = createBrowserRouter(
     >
       <Route
         index
-        element={<HomePage />}
+        element={
+          <>
+            <SignedIn>
+              <HomePage />
+            </SignedIn>
+            <SignedOut>
+              <WelcomePage />
+            </SignedOut>
+          </>
+        }
         loader={getAlbums}
         errorElement={<ErrorPage />}
       />
