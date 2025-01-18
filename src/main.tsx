@@ -63,18 +63,45 @@ const router = createBrowserRouter(
       <Route path="*" element={<ErrorPage />} />
       <Route
         path="/profile"
-        element={<ProfilePage />}
+        element={
+          <>
+            <SignedIn>
+              <ProfilePage />
+            </SignedIn>
+            <SignedOut>
+              <WelcomePage />
+            </SignedOut>
+          </>
+        }
         errorElement={<ErrorPage />}
       />
       <Route
         path="/artist/:authorId/albums/:albumId"
-        element={<AlbumPage />}
+        element={
+          <>
+            <SignedIn>
+              <AlbumPage />
+            </SignedIn>
+            <SignedOut>
+              <WelcomePage />
+            </SignedOut>
+          </>
+        }
         loader={getAlbumWithFiles}
         errorElement={<ErrorPage />}
       />
       <Route
         path="/artist/:artistId"
-        element={<ArtistPage />}
+        element={
+          <>
+            <SignedIn>
+              <ArtistPage />
+            </SignedIn>
+            <SignedOut>
+              <WelcomePage />
+            </SignedOut>
+          </>
+        }
         errorElement={<ErrorPage />}
       />
     </Route>
