@@ -4,7 +4,7 @@ export interface IAudioPlayerState {
   isPlaying: boolean;
   volume: number;
   isMuted: boolean;
-  currentlyPlaying: ISong | null;
+  currentlyPlaying: ISong | undefined;
   queue: ISong[];
   history: ISong[];
   startTime: number;

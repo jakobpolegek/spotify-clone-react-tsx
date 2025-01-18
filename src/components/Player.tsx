@@ -27,9 +27,10 @@ import {
   selectVolume,
   selectIsMuted,
 } from "../slices/audioPlayerSlice";
+import { AppDispatch } from "../store";
 
 const Player = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const isPlaying = useSelector(selectIsPlaying);
   const currentTime = useSelector(selectCurrentTime);
   const duration = useSelector(selectDuration);
@@ -50,7 +51,7 @@ const Player = () => {
 
   const handlePlay = () => {
     try {
-      dispatch(playAudio(null));
+      dispatch(playAudio());
     } catch (error) {
       throw new Error(`An error occurred trying to play this song.`);
     }

@@ -3,93 +3,98 @@ import AudioContextService from "../utils/audioContextService";
 import { IAudioPlayerState } from "../types/IAudioPlayerState";
 import { ISong } from "../types/ISong";
 import { AppDispatch, RootState } from "../store";
+import { IAudioPayload } from "../types/IAudioPayload";
 
 const audioContext = AudioContextService.getInstance();
 const gainNode = AudioContextService.getGainNode();
-
 let currentAudioSource: AudioBufferSourceNode | null = null;
 let currentAudioBuffer: AudioBuffer | null = null;
 let currentSongUrl: string | null = null;
 let currentTimeInterval: NodeJS.Timeout | null = null;
 
-export const playAudio = createAsyncThunk(
-  "audioPlayer/playAudio",
-  async (song: ISong | null = null, { getState, dispatch }) => {
-    try {
-      let audioBuffer: AudioBuffer;
-      let targetSongUrl: string;
-
-      if (song?.source) {
-        dispatch(audioPlayerSlice.actions.resetAudioPlayer());
-        dispatch(audioPlayerSlice.actions.setCurrentlyPlaying(song));
-
-        const state = getState() as { audioPlayer: IAudioPlayerState };
-        const isPlayingFromHistory =
-          state.audioPlayer.history[0]?.source === song.source;
-
-        if (!isPlayingFromHistory) {
-          dispatch(addToHistory(song));
-        }
-
-        const response = await fetch(song.source);
-        const arrayBuffer = await response.arrayBuffer();
-
-        audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-        targetSongUrl = song.source;
-
-        currentAudioBuffer = audioBuffer;
-        currentSongUrl = song.source;
-      } else {
-        if (!currentAudioBuffer) {
-          throw new Error("No audio buffer available");
-        }
-        audioBuffer = currentAudioBuffer;
-        targetSongUrl = currentSongUrl || "Unknown";
-      }
-
-      if (currentAudioSource) {
-        currentAudioSource.stop();
-      }
-
-      const source = audioContext.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(gainNode);
-      const state = getState() as { audioPlayer: IAudioPlayerState };
-      const pausedTime = state.audioPlayer.pausedTime || 0;
-      const startTime = audioContext.currentTime;
-
-      source.start(startTime, pausedTime);
-      currentAudioSource = source;
-
-      const { volume, isMuted } = state.audioPlayer;
-      AudioContextService.toggleMute(isMuted, volume);
-
-      if (currentTimeInterval) {
-        clearInterval(currentTimeInterval);
-      }
-      currentTimeInterval = setInterval(() => {
-        const currentTime = pausedTime + (audioContext.currentTime - startTime);
-
-        if (currentTime >= audioBuffer.duration) {
-          dispatch(audioPlayerSlice.actions.setIsPlaying(false));
-          dispatch(audioPlayerSlice.actions.setCurrentTime(0));
-          dispatch(audioPlayerSlice.actions.setPausedTime(0));
-        } else {
-          dispatch(audioPlayerSlice.actions.setCurrentTime(currentTime));
-        }
-      }, 100);
-
-      return {
-        songUrl: targetSongUrl,
-        startTime,
-        pausedTime,
-        duration: audioBuffer.duration,
-      };
-    } catch (error) {
-      throw new Error("Error playing audio:" + error);
-    }
+export const playAudio = createAsyncThunk<
+  IAudioPayload,
+  ISong | undefined,
+  {
+    dispatch: AppDispatch;
+    state: RootState;
+    rejectValue: Error;
   }
-);
+>("audioPlayer/playAudio", async (song = undefined, { getState, dispatch }) => {
+  try {
+    let audioBuffer: AudioBuffer;
+    let targetSongUrl: string;
+
+    if (song?.source) {
+      dispatch(audioPlayerSlice.actions.resetAudioPlayer());
+      dispatch(audioPlayerSlice.actions.setCurrentlyPlaying(song));
+
+      const state = getState() as { audioPlayer: IAudioPlayerState };
+      const isPlayingFromHistory =
+        state.audioPlayer.history[0]?.source === song.source;
+
+      if (!isPlayingFromHistory) {
+        dispatch(addToHistory(song));
+      }
+
+      const response = await fetch(song.source);
+      const arrayBuffer = await response.arrayBuffer();
+
+      audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      targetSongUrl = song.source;
+
+      currentAudioBuffer = audioBuffer;
+      currentSongUrl = song.source;
+    } else {
+      if (!currentAudioBuffer) {
+        throw new Error("No audio buffer available");
+      }
+      audioBuffer = currentAudioBuffer;
+      targetSongUrl = currentSongUrl || "Unknown";
+    }
+
+    if (currentAudioSource) {
+      currentAudioSource.stop();
+    }
+
+    const source = audioContext.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(gainNode);
+    const state = getState() as { audioPlayer: IAudioPlayerState };
+    const pausedTime = state.audioPlayer.pausedTime || 0;
+    const startTime = audioContext.currentTime;
+
+    source.start(startTime, pausedTime);
+    currentAudioSource = source;
+
+    const { volume, isMuted } = state.audioPlayer;
+    AudioContextService.toggleMute(isMuted, volume);
+
+    if (currentTimeInterval) {
+      clearInterval(currentTimeInterval);
+    }
+    currentTimeInterval = setInterval(() => {
+      const currentTime = pausedTime + (audioContext.currentTime - startTime);
+
+      if (currentTime >= audioBuffer.duration) {
+        dispatch(audioPlayerSlice.actions.setIsPlaying(false));
+        dispatch(audioPlayerSlice.actions.setCurrentTime(0));
+        dispatch(audioPlayerSlice.actions.setPausedTime(0));
+      } else {
+        dispatch(audioPlayerSlice.actions.setCurrentTime(currentTime));
+      }
+    }, 100);
+
+    return {
+      songUrl: targetSongUrl,
+      startTime,
+      pausedTime,
+      duration: audioBuffer.duration,
+    };
+  } catch (error) {
+    throw new Error("Error playing audio:" + error);
+  }
+});
 
 export const pauseAudio =
   () => (dispatch: AppDispatch, getState: () => RootState) => {
@@ -154,58 +159,64 @@ export const playPreviousSong =
     }
   };
 
-export const seekAudio = createAsyncThunk(
-  "audioPlayer/seekAudio",
-  (newTime: number, { getState, dispatch }) => {
-    const state = getState() as { audioPlayer: IAudioPlayerState };
-    if (currentAudioSource) {
-      try {
-        currentAudioSource.stop();
-      } catch (error) {}
-    }
+export const seekAudio = createAsyncThunk<
+  void,
+  number,
+  {
+    dispatch: AppDispatch;
+    state: RootState;
+    rejectValue: Error;
+  }
+>("audioPlayer/seekAudio", (newTime, { getState, dispatch }) => {
+  const state = getState() as { audioPlayer: IAudioPlayerState };
+  if (currentAudioSource) {
+    try {
+      currentAudioSource.stop();
+    } catch (error) {}
+  }
 
-    if (currentTimeInterval) {
-      clearInterval(currentTimeInterval);
-    }
+  if (currentTimeInterval) {
+    clearInterval(currentTimeInterval);
+  }
 
-    dispatch(audioPlayerSlice.actions.setPausedTime(newTime));
-    dispatch(audioPlayerSlice.actions.setCurrentTime(newTime));
+  dispatch(audioPlayerSlice.actions.setPausedTime(newTime));
+  dispatch(audioPlayerSlice.actions.setCurrentTime(newTime));
 
-    if (currentAudioBuffer) {
-      const source = audioContext.createBufferSource();
-      source.buffer = currentAudioBuffer;
-      source.connect(gainNode);
+  if (currentAudioBuffer) {
+    const source = audioContext.createBufferSource();
+    source.buffer = currentAudioBuffer;
+    source.connect(gainNode);
 
-      const startTime = audioContext.currentTime;
+    const startTime = audioContext.currentTime;
 
-      const { volume, isMuted } = state.audioPlayer;
-      AudioContextService.toggleMute(isMuted, volume);
+    const { volume, isMuted } = state.audioPlayer;
+    AudioContextService.toggleMute(isMuted, volume);
 
-      source.start(startTime, newTime);
-      currentAudioSource = source;
-      currentTimeInterval = setInterval(() => {
-        const currentTime = newTime + (audioContext.currentTime - startTime);
+    source.start(startTime, newTime);
+    currentAudioSource = source;
+    currentTimeInterval = setInterval(() => {
+      const currentTime = newTime + (audioContext.currentTime - startTime);
 
-        if (currentAudioBuffer && currentTime >= currentAudioBuffer.duration) {
-          dispatch(audioPlayerSlice.actions.setIsPlaying(false));
-          dispatch(audioPlayerSlice.actions.setCurrentTime(0));
-          dispatch(audioPlayerSlice.actions.setPausedTime(0));
+      if (currentAudioBuffer && currentTime >= currentAudioBuffer.duration) {
+        dispatch(audioPlayerSlice.actions.setIsPlaying(false));
+        dispatch(audioPlayerSlice.actions.setCurrentTime(0));
+        dispatch(audioPlayerSlice.actions.setPausedTime(0));
 
-          if (state.audioPlayer.queue && state.audioPlayer.queue.length) {
-            dispatch(playAudio(state.audioPlayer.queue[0]));
-            dispatch(removeFirstFromQueue());
-          }
-        } else {
-          dispatch(audioPlayerSlice.actions.setCurrentTime(currentTime));
+        if (state.audioPlayer.queue && state.audioPlayer.queue.length) {
+          const song = state.audioPlayer.queue[0];
+          dispatch(playAudio(song));
+          dispatch(removeFirstFromQueue());
         }
-      }, 100);
-
-      if (state.audioPlayer.isPlaying) {
-        dispatch(audioPlayerSlice.actions.setIsPlaying(true));
+      } else {
+        dispatch(audioPlayerSlice.actions.setCurrentTime(currentTime));
       }
+    }, 100);
+
+    if (state.audioPlayer.isPlaying) {
+      dispatch(audioPlayerSlice.actions.setIsPlaying(true));
     }
   }
-);
+});
 
 const audioPlayerSlice = createSlice({
   name: "audioPlayer",
@@ -213,7 +224,7 @@ const audioPlayerSlice = createSlice({
     isPlaying: false,
     volume: 70,
     isMuted: false,
-    currentlyPlaying: null,
+    currentlyPlaying: undefined,
     queue: [],
     history: [],
     startTime: 0,
@@ -284,7 +295,7 @@ const audioPlayerSlice = createSlice({
       }
 
       state.isPlaying = false;
-      state.currentlyPlaying = null;
+      state.currentlyPlaying = undefined;
       state.startTime = 0;
       state.pausedTime = 0;
       state.currentTime = 0;
