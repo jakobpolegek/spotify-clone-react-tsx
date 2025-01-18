@@ -20,7 +20,6 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import { dark } from "@clerk/themes";
 import AudioContextService from "./utils/audioContextService";
 import { getAlbums } from "./utils/api/getAlbums";
-import { SignedIn, SignedOut } from "@clerk/clerk-react";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
