@@ -1,5 +1,4 @@
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
-import { dark } from "@clerk/themes";
 import {
   createBrowserRouter,
   createRoutesFromElements,
