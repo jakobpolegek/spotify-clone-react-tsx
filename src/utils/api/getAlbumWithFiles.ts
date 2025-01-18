@@ -105,6 +105,5 @@ export const getAlbumWithFiles = async ({
     };
   } catch (error) {
     throw new Error("Error fetching album data: " + error);
-    throw error;
   }
 };
