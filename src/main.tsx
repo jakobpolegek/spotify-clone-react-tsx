@@ -29,31 +29,39 @@ AudioContextService.getInstance();
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<MainLayout />} errorElement={<ErrorPage />}>
-      <Route
-        index
-        element={<HomePage />}
-        loader={getAlbums}
-        errorElement={<ErrorPage />}
-      />
-      <Route path="*" element={<ErrorPage />} />
-      <Route
-        path="/profile"
-        element={<ProfilePage />}
-        errorElement={<ErrorPage />}
-      />
-      <Route
-        path="/artist/:authorId/albums/:albumId"
-        element={<AlbumPage />}
-        loader={getAlbumWithFiles}
-        errorElement={<ErrorPage />}
-      />
-      <Route
-        path="/artist/:artistId"
-        element={<ArtistPage />}
-        errorElement={<ErrorPage />}
-      />
-    </Route>
+    <ClerkProvider
+      appearance={{
+        baseTheme: dark,
+      }}
+      publishableKey={PUBLISHABLE_KEY}
+      afterSignOutUrl="/"
+    >
+      <Route path="/" element={<MainLayout />} errorElement={<ErrorPage />}>
+        <Route
+          index
+          element={<HomePage />}
+          loader={getAlbums}
+          errorElement={<ErrorPage />}
+        />
+        <Route path="*" element={<ErrorPage />} />
+        <Route
+          path="/profile"
+          element={<ProfilePage />}
+          errorElement={<ErrorPage />}
+        />
+        <Route
+          path="/artist/:authorId/albums/:albumId"
+          element={<AlbumPage />}
+          loader={getAlbumWithFiles}
+          errorElement={<ErrorPage />}
+        />
+        <Route
+          path="/artist/:artistId"
+          element={<ArtistPage />}
+          errorElement={<ErrorPage />}
+        />
+      </Route>
+    </ClerkProvider>
   )
 );
 
