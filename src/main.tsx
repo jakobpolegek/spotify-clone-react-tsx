@@ -20,6 +20,8 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import { dark } from "@clerk/themes";
 import AudioContextService from "./utils/audioContextService";
 import { getAlbums } from "./utils/api/getAlbums";
+import { SignedIn, SignedOut } from "@clerk/clerk-react";
+import WelcomePage from "./page/WelcomePage.tsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
@@ -29,39 +31,44 @@ AudioContextService.getInstance();
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <ClerkProvider
-      appearance={{
-        baseTheme: dark,
-      }}
-      publishableKey={PUBLISHABLE_KEY}
-      afterSignOutUrl="/"
+    <Route
+      path="/"
+      element={
+        <>
+          <SignedIn>
+            <MainLayout />
+          </SignedIn>
+          <SignedOut>
+            <WelcomePage />
+          </SignedOut>
+        </>
+      }
+      errorElement={<ErrorPage />}
     >
-      <Route path="/" element={<MainLayout />} errorElement={<ErrorPage />}>
-        <Route
-          index
-          element={<HomePage />}
-          loader={getAlbums}
-          errorElement={<ErrorPage />}
-        />
-        <Route path="*" element={<ErrorPage />} />
-        <Route
-          path="/profile"
-          element={<ProfilePage />}
-          errorElement={<ErrorPage />}
-        />
-        <Route
-          path="/artist/:authorId/albums/:albumId"
-          element={<AlbumPage />}
-          loader={getAlbumWithFiles}
-          errorElement={<ErrorPage />}
-        />
-        <Route
-          path="/artist/:artistId"
-          element={<ArtistPage />}
-          errorElement={<ErrorPage />}
-        />
-      </Route>
-    </ClerkProvider>
+      <Route
+        index
+        element={<HomePage />}
+        loader={getAlbums}
+        errorElement={<ErrorPage />}
+      />
+      <Route path="*" element={<ErrorPage />} />
+      <Route
+        path="/profile"
+        element={<ProfilePage />}
+        errorElement={<ErrorPage />}
+      />
+      <Route
+        path="/artist/:authorId/albums/:albumId"
+        element={<AlbumPage />}
+        loader={getAlbumWithFiles}
+        errorElement={<ErrorPage />}
+      />
+      <Route
+        path="/artist/:artistId"
+        element={<ArtistPage />}
+        errorElement={<ErrorPage />}
+      />
+    </Route>
   )
 );
 
