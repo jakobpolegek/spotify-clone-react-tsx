@@ -252,6 +252,9 @@ const audioPlayerSlice = createSlice({
     addToQueue: (state, action) => {
       state.queue.push(action.payload);
     },
+    playNext: (state, action) => {
+      state.queue.unshift(action.payload);
+    },
     removeFirstFromQueue: (state) => {
       const [, ...rest] = state.queue;
       state.queue = rest;
@@ -326,6 +329,7 @@ export const {
   setCurrentTime,
   setCurrentlyPlaying,
   addToQueue,
+  playNext,
   removeFirstFromQueue,
   addToHistory,
   removeFromHistory,

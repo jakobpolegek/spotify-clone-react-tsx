@@ -8,11 +8,18 @@ import {
   selectIsPlaying,
   selectCurrentlyPlaying,
   addToQueue,
+  playNext,
   selectQueue,
 } from "../slices/audioPlayerSlice";
 import { IAlbum } from "../types/IAlbum";
 import { ISong } from "../types/ISong";
 import { AppDispatch } from "../store";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "../components/ui/context-menu";
 
 const AlbumPage = () => {
   const album = useLoaderData() as IAlbum;
@@ -69,34 +76,67 @@ const AlbumPage = () => {
       </div>
       <div id="songs" className="flex flex-col">
         {album.songs?.map((song) => (
-          <div
-            id="song"
-            key={song.title}
-            className="flex flex-row text-white ml-4 mt-4 items-center"
-          >
-            {isPlaying && currentlyPlaying?.title === song.title ? (
-              <Button variant="link" onClick={handlePause}>
-                <Pause />
-              </Button>
-            ) : (
-              <Button
-                variant="link"
+          <ContextMenu key={song.title}>
+            <ContextMenuTrigger>
+              <div
+                id="song"
+                className="flex flex-row text-white ml-6 mt-6 items-center"
+              >
+                {isPlaying && currentlyPlaying?.title === song.title ? (
+                  <Button variant="link" onClick={handlePause}>
+                    <Pause />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      handlePlay(song);
+                    }}
+                  >
+                    <Play />
+                  </Button>
+                )}
+                <div id="song-metadata" className="flex flex-col ml-4">
+                  <h1>
+                    {song.title
+                      .replace(/^[0-9]{2}\s-\s/, "")
+                      .replace(/\.mp3$/, "")}
+                  </h1>
+                  <h3 className="text-gray-400">
+                    {album.authors.map((author) => author.name).join(", ")}
+                  </h3>
+                </div>
+              </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent className="bg-slate-800 text-white">
+              <ContextMenuItem>Add to liked songs</ContextMenuItem>
+              <ContextMenuItem
                 onClick={() => {
-                  handlePlay(song);
+                  const modifiedSong: ISong = {
+                    ...song,
+                    authors: album.authors,
+                    cover: album.cover,
+                  };
+                  dispatch(addToQueue(modifiedSong));
                 }}
               >
-                <Play />
-              </Button>
-            )}
-            <div id="song-metadata" className="flex flex-col ml-4">
-              <h1>
-                {song.title.replace(/^[0-9]{2}\s-\s/, "").replace(/\.mp3$/, "")}
-              </h1>
-              <h3 className="text-gray-400">
-                {album.authors.map((author) => author.name).join(", ")}
-              </h3>
-            </div>
-          </div>
+                Add to queue
+              </ContextMenuItem>
+              <ContextMenuItem
+                onClick={() => {
+                  const modifiedSong: ISong = {
+                    ...song,
+                    authors: album.authors,
+                    cover: album.cover,
+                  };
+                  dispatch(playNext(modifiedSong));
+                }}
+              >
+                Play next
+              </ContextMenuItem>
+              <ContextMenuItem>Subscription</ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
         ))}
       </div>
     </div>
