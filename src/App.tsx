@@ -15,6 +15,7 @@ import ErrorPage from "./page/ErrorPage";
 import WelcomePage from "./page/WelcomePage";
 import { store } from "./store";
 import { getAlbumWithFiles } from "./utils/api/getAlbumWithFiles";
+import { getAlbums } from "./utils/api/getAlbums";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -50,7 +51,7 @@ const router = createBrowserRouter(
             </SignedOut>
           </>
         }
-        loader={getAlbumWithFiles}
+        loader={getAlbums}
         errorElement={<ErrorPage />}
       />
       <Route path="*" element={<ErrorPage />} />
