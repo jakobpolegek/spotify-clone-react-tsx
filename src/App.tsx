@@ -50,6 +50,7 @@ const router = createBrowserRouter(
             </SignedOut>
           </>
         }
+        loader={getAlbumWithFiles}
         errorElement={<ErrorPage />}
       />
       <Route path="*" element={<ErrorPage />} />
