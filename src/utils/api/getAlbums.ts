@@ -5,7 +5,7 @@ export const getAlbums = async (): Promise<any> => {
         id,
         title,
         createdAt:created_at,
-        bucketFolderName:bucket_folder_name,
+        bucketFolderName,
         cover,
         authors:author_id (
           id,

@@ -12,7 +12,7 @@ export const getAlbumWithFiles = async ({
         id,
         createdAt:created_at,
         title,
-        bucketFolderName: bucket_folder_name
+        bucketFolderName
         `
       )
       .eq("id", albumId)
@@ -29,13 +29,13 @@ export const getAlbumWithFiles = async ({
         id,
         createdAt:created_at,
         title,
-        bucketFolderName:bucket_folder_name,
+        bucketFolderName,
         authors:author_id (
           id,
           name
         )`
       )
-      .eq("bucket_folder_name", initialAlbum.bucketFolderName);
+      .eq("bucketFolderName", initialAlbum.bucketFolderName);
 
     if (!albumWithAuthors || albumWithAuthors.length === 0) {
       throw new Error(`Album data could not be retrieved.`);

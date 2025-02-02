@@ -16,6 +16,7 @@ import WelcomePage from "./page/WelcomePage";
 import { store } from "./store";
 import { getAlbumWithFiles } from "./utils/api/getAlbumWithFiles";
 import { getAlbums } from "./utils/api/getAlbums";
+import LikedSongsPage from "./page/LikedSongsPage";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -98,7 +99,22 @@ const router = createBrowserRouter(
         }
         errorElement={<ErrorPage />}
       />
+      <Route
+        path="/likedSongs"
+        element={
+          <>
+            <SignedIn>
+              <LikedSongsPage />
+            </SignedIn>
+            <SignedOut>
+              <WelcomePage />
+            </SignedOut>
+          </>
+        }
+        errorElement={<ErrorPage />}
+      />
     </Route>
+    
   )
 );
 
