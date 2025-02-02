@@ -1,6 +1,7 @@
 import { IAuthor } from "../types/IAuthor";
+import { IAlbum } from "../types/IAlbum";
 
-export const Album = ({ album }: { album: any }) => {
+export const Album = ({ album }: { album: IAlbum }) => {
   const artistNames = album.authors
     .map((author: IAuthor) => author.name)
     .reduce((acc: string, name: string, index: number, array: string[]) => {
