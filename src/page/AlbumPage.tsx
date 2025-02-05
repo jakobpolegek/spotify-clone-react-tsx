@@ -69,7 +69,7 @@ const AlbumPage = () => {
           {album.songs?.map((song) => (
             <ContextMenu key={song.source}>
               <ContextMenuTrigger>
-                <Song key={song.source} page={0} song={{...song, cover: album.cover, authors: album.authors}} isPlaying={isPlaying}/>
+                <Song key={song.source} page={0} song={{...song, cover: album.cover, authors: album.authors, albumId: album.id}} isPlaying={isPlaying}/>
               </ContextMenuTrigger>
               <ContextMenuContent className="bg-slate-800 text-white border-0">
                 <ContextMenuItem

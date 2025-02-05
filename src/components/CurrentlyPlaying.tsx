@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { selectCurrentlyPlaying } from "../slices/audioPlayerSlice";
 import { IAuthor } from "../types/IAuthor";
 
@@ -24,11 +25,13 @@ const CurrentlyPlaying = () => {
             <></>
           )}
           <div id="song" className="flex flex-col items-start mx-2 mb-2">
-            <h3 id="title" className="font-bold text-white">
-              {currentlyPlaying.title
-                ?.replace(/^[0-9]{2}\s-\s/, "")
-                .replace(/\.mp3$/, "")}
-            </h3>
+            <Link to={`/artist/${currentlyPlaying.authors[0].id}/albums/${currentlyPlaying.albumId}`}>
+              <h3 id="title" className="font-bold text-white">
+                {currentlyPlaying.title
+                  ?.replace(/^[0-9]{2}\s-\s/, "")
+                  .replace(/\.mp3$/, "")}
+              </h3>
+            </Link>
             <h3 id="artist" className="text-gray-300">
               {artistNames}
             </h3>
