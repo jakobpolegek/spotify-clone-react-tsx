@@ -5,8 +5,6 @@ import { ISong } from "../types/ISong";
 import { AppDispatch, RootState } from "../store";
 import { IAudioPayload } from "../types/IAudioPayload";
 
-const audioContext = AudioContextService.getInstance();
-const gainNode = AudioContextService.getGainNode();
 let currentAudioSource: AudioBufferSourceNode | null = null;
 let currentAudioBuffer: AudioBuffer | null = null;
 let currentSongUrl: string | null = null;
@@ -24,7 +22,9 @@ export const playAudio = createAsyncThunk<
   try {
     let audioBuffer: AudioBuffer;
     let targetSongUrl: string;
-
+    const audioContext = AudioContextService.getInstance();
+    const gainNode = AudioContextService.getGainNode();
+    
     if (song?.source) {
       dispatch(audioPlayerSlice.actions.resetAudioPlayer());
       dispatch(audioPlayerSlice.actions.setCurrentlyPlaying(song));
@@ -101,6 +101,7 @@ export const pauseAudio =
     const state = getState() as { audioPlayer: IAudioPlayerState };
 
     if (currentAudioSource) {
+      const audioContext = AudioContextService.getInstance();
       try {
         currentAudioSource.stop();
       } catch (error) {
