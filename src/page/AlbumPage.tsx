@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import {
   HeartIcon,
   PlusCircleIcon,
@@ -60,9 +60,11 @@ const AlbumPage = () => {
           <div id="album-metadata" className="flex flex-col mt-auto mb-10">
             Album
             <h1 className="text-8xl font-extrabold mt-2"> {album.title}</h1>
-            <h3 className="mt-0">
-              {album.authors.map((author) => author.name).join(", ")}
-            </h3>
+            <Link to={`/artist/${album.authors[0].id}`}>
+              <h3 className="mt-0">
+                {album.authors.map((author) => author.name).join(", ")}
+              </h3>
+            </Link>
           </div>
         </div>
         <div id="songs" className="flex flex-col">

@@ -44,9 +44,11 @@ export const Song = ({ song, isPlaying, page = 0 }: { song:ISong, isPlaying:bool
             {song.title.replace(/^[0-9]{2}\s-\s/, "").replace(/\.mp3$/, "")}
           </h1>
         </Link>
-        <h3 className="text-gray-400">
-          {song?.authors?.map((author) => author.name).join(", ")}
-        </h3>
+        <Link to={`/artist/${song?.authors[0].id}`}>
+          <h3 className="text-gray-400">
+            {song?.authors?.map((author) => author.name).join(", ")}
+          </h3>
+        </Link>
       </div>
     </div>
   );

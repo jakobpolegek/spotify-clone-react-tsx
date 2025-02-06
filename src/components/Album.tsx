@@ -1,5 +1,6 @@
 import { IAuthor } from "../types/IAuthor";
 import { IAlbum } from "../types/IAlbum";
+import { Link } from "react-router-dom";
 
 export const Album = ({ album }: { album: IAlbum }) => {
   const artistNames = album.authors
@@ -10,11 +11,13 @@ export const Album = ({ album }: { album: IAlbum }) => {
       return `${acc}, ${name}`;
     }, "");
 
-  return (
+    return (
     <div id="album" className="text-white w-48 h-48">
       <img src={album.cover} className="w-max h-max mb-1" alt={album.title} />
       <h1 className="text-2xl font-bold">{album.title}</h1>
-      <h3>{artistNames}</h3>
+      <Link to={`/artist/${album.authors[0].id}`}>  
+        <h3>{artistNames}</h3>
+      </Link>
     </div>
   );
 };

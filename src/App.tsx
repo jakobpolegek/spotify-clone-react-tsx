@@ -17,6 +17,7 @@ import { store } from "./store";
 import { getAlbumWithFiles } from "./utils/api/getAlbumWithFiles";
 import { getAlbums } from "./utils/api/getAlbums";
 import LikedSongsPage from "./page/LikedSongsPage";
+import { getAuthor } from "./utils/api/getAuthor";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -97,6 +98,7 @@ const router = createBrowserRouter(
             </SignedOut>
           </>
         }
+        loader={getAuthor}
         errorElement={<ErrorPage />}
       />
       <Route
