@@ -24,7 +24,7 @@ export const playAudio = createAsyncThunk<
     let targetSongUrl: string;
     const audioContext = AudioContextService.getInstance();
     const gainNode = AudioContextService.getGainNode();
-    
+
     if (song?.source) {
       dispatch(audioPlayerSlice.actions.resetAudioPlayer());
       dispatch(audioPlayerSlice.actions.setCurrentlyPlaying(song));
@@ -170,6 +170,9 @@ export const seekAudio = createAsyncThunk<
   }
 >("audioPlayer/seekAudio", (newTime, { getState, dispatch }) => {
   const state = getState() as { audioPlayer: IAudioPlayerState };
+  const audioContext = AudioContextService.getInstance();
+  const gainNode = AudioContextService.getGainNode();
+  
   if (currentAudioSource) {
     try {
       currentAudioSource.stop();
