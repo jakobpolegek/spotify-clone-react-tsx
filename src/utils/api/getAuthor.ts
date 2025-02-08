@@ -2,14 +2,15 @@ import { LoaderFunctionArgs } from "react-router-dom";
 import { supabase } from "../supabase";
 
 export const getAuthor = async ({
-  params: { artistId },
+  params: { authorId },
 }: LoaderFunctionArgs): Promise<any> => {
   const { data: albums } = await supabase.from("authors").select(`
         id,
         name,
-        description
+        description,
+        image
       `)
-      .eq("id", artistId)
+      .eq("id", authorId)
       .single();
 
   return albums;
