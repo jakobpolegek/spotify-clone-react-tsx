@@ -26,7 +26,6 @@ const AuthorPage = () => {
       setAuthorLoading(false);
       fetchAlbumsFromAuthor().then(() => {
         setAlbumsLoading(false);
-        console.log(albums);
       });
     }
   }, [author]);
