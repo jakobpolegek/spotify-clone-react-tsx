@@ -10,13 +10,14 @@ import MainLayout from "./layouts/MainLayout";
 import HomePage from "./page/HomePage";
 import ProfilePage from "./page/ProfilePage";
 import AlbumPage from "./page/AlbumPage";
-import ArtistPage from "./page/ArtistPage";
+import AuthorPage from "./page/AuthorPage";
 import ErrorPage from "./page/ErrorPage";
 import WelcomePage from "./page/WelcomePage";
 import { store } from "./store";
 import { getAlbumWithFiles } from "./utils/api/getAlbumWithFiles";
 import { getAlbums } from "./utils/api/getAlbums";
 import LikedSongsPage from "./page/LikedSongsPage";
+import { getAuthor } from "./utils/api/getAuthor";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -86,17 +87,18 @@ const router = createBrowserRouter(
         errorElement={<ErrorPage />}
       />
       <Route
-        path="/artist/:artistId"
+        path="/artist/:authorId"
         element={
           <>
             <SignedIn>
-              <ArtistPage />
+              <AuthorPage />
             </SignedIn>
             <SignedOut>
               <WelcomePage />
             </SignedOut>
           </>
         }
+        loader={getAuthor}
         errorElement={<ErrorPage />}
       />
       <Route

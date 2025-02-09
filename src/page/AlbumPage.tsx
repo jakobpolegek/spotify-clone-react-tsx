@@ -25,6 +25,7 @@ import { Song
  } from "../components/Song";
  import { useEffect, useState } from "react";
 import { Spinner } from "../components/ui/spinner";
+import { Authors } from "../components/Authors";
 
 const AlbumPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -60,9 +61,7 @@ const AlbumPage = () => {
           <div id="album-metadata" className="flex flex-col mt-auto mb-10">
             Album
             <h1 className="text-8xl font-extrabold mt-2"> {album.title}</h1>
-            <h3 className="mt-0">
-              {album.authors.map((author) => author.name).join(", ")}
-            </h3>
+            <Authors authors={album.authors} />
           </div>
         </div>
         <div id="songs" className="flex flex-col">

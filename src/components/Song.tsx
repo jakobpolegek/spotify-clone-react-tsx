@@ -10,7 +10,7 @@ import {
 import {  useSelector } from "react-redux";
 import { useAudioControls } from "../utils/songUtils";
 import { Link } from "react-router-dom";
-
+import { Authors } from "./Authors";
 
 export const Song = ({ song, isPlaying, page = 0 }: { song:ISong, isPlaying:boolean, page:number}) => {
   const currentlyPlaying = useSelector(selectCurrentlyPlaying);
@@ -44,9 +44,7 @@ export const Song = ({ song, isPlaying, page = 0 }: { song:ISong, isPlaying:bool
             {song.title.replace(/^[0-9]{2}\s-\s/, "").replace(/\.mp3$/, "")}
           </h1>
         </Link>
-        <h3 className="text-gray-400">
-          {song?.authors?.map((author) => author.name).join(", ")}
-        </h3>
+        <Authors authors={song.authors} />
       </div>
     </div>
   );
