@@ -46,18 +46,22 @@ const AuthorPage = () => {
         <Spinner show={albumsLoading} size="large"/> 
       ) : (
         <>
-          <h3 className="text-4xl font-extrabold mt-10 ml-8 text-white">Latest releases:</h3>
-          <div id="albums" className="flex flex-col">
+          <h3 className="text-4xl font-extrabold mt-10 ml-8 text-white">Discography</h3>
+          <div id="albums" className="flex">
             {albums?.map((album) => (
-              <Link to={`/artist/${author.id}/albums/${album.id}`} key={album.id}>
-                <div key={album.id} className="flex flex-col">
-                  <img src={album.cover} className="h-60 w-60 m-4 ml-12 mt-12" />
-                  <h1 className="text-2xl font-bold mt-2 ml-12 text-white">{album.title}</h1>
+              <div key={album.id} id="album" className="w-auto">
+                <Link to={`/artist/${author.id}/albums/${album.id}`}>
+                  <img src={album.cover} className="h-60 w-60 m-4 ml-12 mt-6" />
+                  <h1 className="text-2xl font-bold ml-12 text-white">{album.title}</h1>
                   <h3 className="text-gray-400 ml-12">{`${new Date(album.createdAt).toLocaleString('en-US', { month: 'long', year: 'numeric' })}`}</h3>
-                </div>
-              </Link>
+                </Link>
+              </div>
             ))}
           </div>
+          <h3 className="text-4xl font-extrabold mt-14 ml-8 text-white">About</h3>
+          <p className="text-white ml-12 mt-4 w-2/4">
+            {author.description}
+          </p>
         </>
       )}
         </>

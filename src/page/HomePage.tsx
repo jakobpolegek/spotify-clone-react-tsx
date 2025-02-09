@@ -1,5 +1,4 @@
 import { Album } from "../components/Album";
-import { Link } from "react-router-dom";
 import { IAlbum } from "../types/IAlbum";
 import { processAlbums } from "../utils/albumUtils";
 import { useLoaderData } from "react-router-dom";
@@ -13,12 +12,7 @@ const HomePage = () => {
       <div className="flex items-center justify-center max-h-screen grow">
         <div id="albums" className="m-2 flex flex-wrap space-x-12">
           {mergedAlbums.map((album) => (
-            <Link
-              key={album.id}
-              to={`/artist/${album.authors[0]?.id}/albums/${album.id}`}
-            >
-              <Album key={album.id} album={album} />
-            </Link>
+            <Album key={album.id} album={album} />
           ))}
         </div>
       </div>
