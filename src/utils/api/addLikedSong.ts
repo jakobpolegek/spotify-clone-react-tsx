@@ -1,11 +1,13 @@
-import { supabase } from "../supabase";
+import { createClerkSupabaseClient } from "../supabase";
 import { ISong } from "../../types/ISong";
 
-export const addLikedSong = async (userId: string, {
+export const addLikedSong = async ({
   albumId,
   title,
   authors,
-}: ISong) => {
+}: ISong, session:any) => {
+  const supabase = createClerkSupabaseClient(session);
+
   try {
     if (!authors || authors.length === 0) {
       throw new Error("Authors array is empty.");
@@ -15,14 +17,13 @@ export const addLikedSong = async (userId: string, {
       supabase
         .from("likedSongs")
         .select("user_id, albumId, title, authorId")
-        .eq("user_id", userId)
         .eq("albumId", albumId)
         .eq("title", title)
         .eq("authorId", author.id)
     );
 
     const existingRecordsResults = await Promise.all(existingRecordsPromises);
-
+    console.log(existingRecordsResults);
     const newAuthors = authors.filter((_, index) => {
       const { data } = existingRecordsResults[index];
       return !data || data.length === 0;
@@ -36,7 +37,6 @@ export const addLikedSong = async (userId: string, {
     }
 
     const insertData = newAuthors.map((author) => ({
-      user_id: userId,
       albumId,
       title,
       authorId: author.id,

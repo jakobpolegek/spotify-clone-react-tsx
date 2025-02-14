@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { ISong } from "../types/ISong";
 import { getLikedSongs } from "../utils/api/getLikedSongs";
-import { removeLikedSong } from "../utils/api/removeLikedSong";
 
-const useLikedSongs = (userId: string) => {
+const useLikedSongs = (userId: string, session:any) => {
     const [likedSongs, setLikedSongs] = useState<ISong[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
   
@@ -11,7 +10,7 @@ const useLikedSongs = (userId: string) => {
         setLoading(true);
         try {
           if (userId) {
-            const songs = await getLikedSongs(userId);
+            const songs = await getLikedSongs(userId,session);
             setLikedSongs(songs);
           }
         } catch (err) {
@@ -21,23 +20,13 @@ const useLikedSongs = (userId: string) => {
         }
     };
       
-    const removeSong = async (song: ISong) => {
-        try {
-          await removeLikedSong(userId, song);
-          await fetchLikedSongs(); 
-        } catch (err) {
-            throw new Error(`TThere was a problem removing the liked song: ${err}`);
-        }
-      };
-
-
     useEffect(() => {
       if (userId) {
         fetchLikedSongs();
       }
     }, [userId]);
   
-    return { likedSongs, loading, removeSong};
+    return { likedSongs, loading, fetchLikedSongs };
   };
   
   export default useLikedSongs;

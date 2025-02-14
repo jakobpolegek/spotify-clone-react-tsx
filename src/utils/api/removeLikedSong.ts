@@ -1,11 +1,12 @@
-import { supabase } from "../supabase";
+import { createClerkSupabaseClient } from "../supabase";
 import { ISong } from "../../types/ISong";
 
 export const removeLikedSong = async (userId: string, {
     albumId,
     title,
     authors,
-  }: ISong) => {
+  }: ISong,session:any) => {
+    const supabase = createClerkSupabaseClient(session);
     try {
       if (!authors || authors.length === 0) {
         throw new Error("Authors array is empty.");

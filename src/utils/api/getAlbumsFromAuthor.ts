@@ -1,6 +1,7 @@
-import { supabase } from "../supabase";
+import { createClerkSupabaseClient } from "../supabase";
 
-export const getAlbumsFromAuthor = async (authorId:number): Promise<any> => {
+export const getAlbumsFromAuthor = async (authorId:number, session:any): Promise<any> => {
+  const supabase = createClerkSupabaseClient(session);
   const { data: albums } = await supabase.from("albums").select(`
         id,
         title,

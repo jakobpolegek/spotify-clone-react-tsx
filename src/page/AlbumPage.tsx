@@ -19,7 +19,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "../components/ui/context-menu";
-import { useUser } from "@clerk/clerk-react";
+import { useSession, useUser } from "@clerk/clerk-react";
 import { addLikedSong } from "../utils/api/addLikedSong";
 import { Song
  } from "../components/Song";
@@ -33,6 +33,7 @@ const AlbumPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const isPlaying = useSelector(selectIsPlaying);
   const { user } = useUser();
+  const { session } = useSession();
 
   useEffect(() => {
     if (album) {
@@ -43,7 +44,7 @@ const AlbumPage = () => {
   const addSongToLikedSongs = async (newSong: ISong) => {
     try {
       if (user?.id) {
-        await addLikedSong(user.id, newSong);
+        await addLikedSong(newSong,session);
       }
     } catch (error) {
       throw new Error("There was a problem adding liked song. " + error);

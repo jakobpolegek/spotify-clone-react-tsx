@@ -1,8 +1,9 @@
-import { supabase } from "../supabase";
 import { ISong } from "../../types/ISong";
 import { ILikedSong } from "../../types/ILikedSong";
+import { createClerkSupabaseClient } from "../supabase";
 
-export const getLikedSongs = async (userId: string): Promise<ISong[]> => {
+export const getLikedSongs = async (userId: string,session:any): Promise<ISong[]> => {
+  const supabase = createClerkSupabaseClient(session);
   try {
     const { data: likedSongs, error: likedSongsError } = await supabase
       .from("likedSongs")
