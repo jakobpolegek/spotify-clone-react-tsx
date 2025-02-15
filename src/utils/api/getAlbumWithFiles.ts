@@ -1,10 +1,11 @@
-import { supabase } from "../supabase";
 import { LoaderFunctionArgs } from "react-router-dom";
+import { getSupabaseClient } from "../supabase";
 
 export const getAlbumWithFiles = async ({
   params: { albumId },
 }: LoaderFunctionArgs): Promise<any> => {
   try {
+    const supabase = getSupabaseClient();
     const { data: initialAlbum } = await supabase
       .from("albums")
       .select(

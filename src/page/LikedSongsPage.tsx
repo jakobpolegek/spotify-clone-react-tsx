@@ -1,5 +1,4 @@
 import { ISong } from "../types/ISong";
-import { useSession, useUser } from "@clerk/clerk-react";
 import { Song } from "../components/Song";
 import { useDispatch, useSelector } from "react-redux";
 import { selectIsPlaying } from "../slices/audioPlayerSlice";
@@ -22,18 +21,18 @@ import {
 } from "../slices/audioPlayerSlice";
 import useLikedSongs from "../hooks/useLikedSongs";
 import { removeLikedSong } from "../utils/api/removeLikedSong";
+import { useUser } from "@clerk/clerk-react";
 
 const LikedSongsPage = () => {
+  const { likedSongs, loading, fetchLikedSongs } = useLikedSongs();
   const { user } = useUser();
-  const { session } = useSession();
-  if (!user) throw new Error("User is not authenticated");
-  const { likedSongs, loading, fetchLikedSongs } = useLikedSongs(user.id, session);
+  if (!user) throw new Error("User not authenticated");
   const dispatch = useDispatch<AppDispatch>();
   const isPlaying = useSelector(selectIsPlaying);
-
+ 
   const removeSong = async (song: ISong) => {
     try {
-      await removeLikedSong(user.id, song, session);
+      await removeLikedSong(user.id, song);
       await fetchLikedSongs();
     } catch (err) {
       throw new Error(`TThere was a problem removing the liked song: ${err}`);
@@ -58,15 +57,13 @@ const LikedSongsPage = () => {
                 <ContextMenuContent className="bg-slate-800 text-white border-0">
                   <ContextMenuItem
                     onClick={() => {
-                      if (user) {
-                        const newSong: ISong = {
-                          source: song.source,
-                          albumId: song.albumId,
-                          title: song.title,
-                          authors: song.authors || [],
-                        };
-                        removeSong(newSong);
-                      }
+                      const newSong: ISong = {
+                        source: song.source,
+                        albumId: song.albumId,
+                        title: song.title,
+                        authors: song.authors || [],
+                      };
+                      removeSong(newSong);
                     }}
                   >
                     <HeartCrackIcon /> &nbsp; Remove liked songs

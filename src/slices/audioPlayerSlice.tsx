@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import AudioContextService from "../utils/audioContextService";
+import AudioContextService from "../contexts/audioContextService";
 import { IAudioPlayerState } from "../types/IAudioPlayerState";
 import { ISong } from "../types/ISong";
 import { AppDispatch, RootState } from "../store";

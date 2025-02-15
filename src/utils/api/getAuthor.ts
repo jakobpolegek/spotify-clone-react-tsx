@@ -1,9 +1,10 @@
 import { LoaderFunctionArgs } from "react-router-dom";
-import { supabase } from "../supabase";
+import { getSupabaseClient } from "../supabase";
 
 export const getAuthor = async ({
   params: { authorId },
 }: LoaderFunctionArgs): Promise<any> => {
+  const supabase = getSupabaseClient();
   const { data: albums } = await supabase.from("authors").select(`
         id,
         name,

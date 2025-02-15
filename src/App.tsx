@@ -1,4 +1,4 @@
-import { SignedIn, SignedOut } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, useSession } from "@clerk/clerk-react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -18,6 +18,8 @@ import { getAlbumWithFiles } from "./utils/api/getAlbumWithFiles";
 import { getAlbums } from "./utils/api/getAlbums";
 import LikedSongsPage from "./page/LikedSongsPage";
 import { getAuthor } from "./utils/api/getAuthor";
+import { setCurrentSession } from "./utils/supabase";
+import { useEffect } from "react";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -121,6 +123,11 @@ const router = createBrowserRouter(
 );
 
 const App = () => {
+  const { session } = useSession();
+  useEffect(() => {
+    setCurrentSession(session); 
+  }, [session]);
+  
   return (
     <Provider store={store}>
       <RouterProvider router={router} />

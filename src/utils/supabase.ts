@@ -1,33 +1,37 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const createClerkSupabaseClient = (session:any) => {
-    return createClient(
-        supabaseUrl,
-        supabaseAnonKey,
-      {
-        global: {
-          // Get the custom Supabase token from Clerk
-          fetch: async (url, options = {}) => {
-            const clerkToken = await session?.getToken({
-              template: 'supabase',
-            })
+let currentSession: any = null;
+let supabaseClient: SupabaseClient | null = null;
 
-            // Insert the Clerk Supabase token into the headers
-            const headers = new Headers(options?.headers)
-            headers.set('Authorization', `Bearer ${clerkToken}`)
+export const setCurrentSession = (session: any) => {
+  currentSession = session;
+};
 
-            // Now call the default fetch
-            return fetch(url, {
-              ...options,
-              headers,
-            })
-          },
+export const getSupabaseClient = (): SupabaseClient => {
+  if (!supabaseClient) {
+    supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        fetch: async (url, options = {}) => {
+          const clerkToken = await currentSession?.getToken({
+            template: "supabase",
+          });
+
+          const headers = new Headers(options?.headers);
+          if (clerkToken) {
+            headers.set("Authorization", `Bearer ${clerkToken}`);
+          }
+
+          return fetch(url, {
+            ...options,
+            headers,
+          });
         },
       },
-    )
+    });
   }
 
-export const supabase = createClient(supabaseUrl,supabaseAnonKey);
+  return supabaseClient;
+};
