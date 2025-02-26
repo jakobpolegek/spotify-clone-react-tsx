@@ -1,54 +1,45 @@
 import { useLoaderData } from "react-router-dom";
-import {
-  HeartIcon,
-  PlusCircleIcon,
-  CircleArrowRightIcon,
-} from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectIsPlaying,
-  playNext,
-  addToQueue,
+  selectPlaylists,
+  setPlaylists,
 } from "../slices/audioPlayerSlice";
 import { IAlbum } from "../types/IAlbum";
-import { ISong } from "../types/ISong";
 import { AppDispatch } from "../store";
 import {
   ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
   ContextMenuTrigger,
 } from "../components/ui/context-menu";
 import { useUser } from "@clerk/clerk-react";
-import { addLikedSong } from "../utils/api/addLikedSong";
 import { Song
  } from "../components/Song";
  import { useEffect, useState } from "react";
 import { Spinner } from "../components/ui/spinner";
 import { Authors } from "../components/Authors";
+import { getUserPlaylists } from "../utils/api/getUserPlaylist";
+import { SongContextMenu } from "../components/SongContextMenu";
 
 const AlbumPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
+  const userPlaylists =  useSelector(selectPlaylists);
   const album = useLoaderData() as IAlbum;
   const dispatch = useDispatch<AppDispatch>();
   const isPlaying = useSelector(selectIsPlaying);
   const { user } = useUser();
+  if (!user) throw new Error("User not authenticated");
 
   useEffect(() => {
     if (album) {
       setLoading(false);
     }
-  }, [album]);
-  
-  const addSongToLikedSongs = async (newSong: ISong) => {
-    try {
-      if (user?.id) {
-        await addLikedSong(newSong);
-      }
-    } catch (error) {
-      throw new Error("There was a problem adding liked song. " + error);
+
+    if(user && userPlaylists?.length === 0) {
+      getUserPlaylists(user.id).then((res) => {
+        dispatch(setPlaylists(res.data));
+      });
     }
-  };
+  }, [album,userPlaylists]);
 
   return (
     <div className="col-span-7 row-span-11 h-[calc(100vh-200px)] overflow-y-auto">
@@ -66,54 +57,32 @@ const AlbumPage = () => {
         </div>
         <div id="songs" className="flex flex-col">
           {album.songs?.map((song) => (
-            <ContextMenu key={song.source}>
-              <ContextMenuTrigger>
-                <Song key={song.source} page={0} song={{...song, cover: album.cover, authors: album.authors, albumId: album.id}} isPlaying={isPlaying}/>
-              </ContextMenuTrigger>
-              <ContextMenuContent className="bg-slate-800 text-white border-0">
-                <ContextMenuItem
-                  onClick={() => {
-                    if (user) {
-                      const newSong: ISong = {
-                        albumId: album.id,
-                        title: song.title,
-                        authors: album.authors
-                      };
-                      addSongToLikedSongs(newSong);
-                    }
-                  }}
-                >
-                  <HeartIcon /> &nbsp; Add to liked songs
-                </ContextMenuItem>
-                <ContextMenuItem
-                  onClick={() => {
-                    const modifiedSong: ISong = {
-                      ...song,
-                      authors: album.authors,
-                      cover: album.cover,
-                    };
-                    dispatch(addToQueue(modifiedSong));
-                  }}
-                >
-                  <PlusCircleIcon /> &nbsp; Add to queue
-                </ContextMenuItem>
-                <ContextMenuItem
-                  onClick={() => {
-                    const modifiedSong: ISong = {
-                      ...song,
-                      authors: album.authors,
-                      cover: album.cover,
-                    };
-                    dispatch(playNext(modifiedSong));
-                  }}
-                >
-                  <CircleArrowRightIcon />
-                  &nbsp; Play next
-                </ContextMenuItem>
-              </ContextMenuContent>
-            </ContextMenu>
-          ))}
-        </div>
+          <ContextMenu key={`context-${song.source}`} >
+            <ContextMenuTrigger>
+              <Song 
+                page={0} 
+                song={{
+                  ...song, 
+                  cover: album.cover, 
+                  authors: album.authors, 
+                  albumId: album.id
+                }} 
+                isPlaying={isPlaying}
+              />
+            </ContextMenuTrigger>
+            <SongContextMenu
+              song={{
+                ...song, 
+                cover: album.cover, 
+                authors: album.authors, 
+                albumId: album.id
+              }}
+              userId={user.id}
+              userPlaylists={userPlaylists}
+            />
+        </ContextMenu>
+      ))}
+      </div>
       </>)}
     </div>
 

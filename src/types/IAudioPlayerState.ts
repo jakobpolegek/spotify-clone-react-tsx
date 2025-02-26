@@ -1,6 +1,8 @@
+import { IPlaylistEntry } from "./IPlaylistEntry";
 import { ISong } from "./ISong";
 
 export interface IAudioPlayerState {
+  playlists: IPlaylistEntry[];
   isPlaying: boolean;
   volume: number;
   isMuted: boolean;

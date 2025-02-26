@@ -4,6 +4,7 @@ import { IAudioPlayerState } from "../types/IAudioPlayerState";
 import { ISong } from "../types/ISong";
 import { AppDispatch, RootState } from "../store";
 import { IAudioPayload } from "../types/IAudioPayload";
+import { getUserPlaylists } from "../utils/api/getUserPlaylist";
 
 let currentAudioSource: AudioBufferSourceNode | null = null;
 let currentAudioBuffer: AudioBuffer | null = null;
@@ -225,6 +226,7 @@ export const seekAudio = createAsyncThunk<
 const audioPlayerSlice = createSlice({
   name: "audioPlayer",
   initialState: {
+    playlists: [],
     isPlaying: false,
     volume: 70,
     isMuted: false,
@@ -243,6 +245,9 @@ const audioPlayerSlice = createSlice({
       if (currentAudioSource) {
         AudioContextService.setVolume(action.payload);
       }
+    },
+    setPlaylists: (state, action) => {
+      state.playlists = action.payload;
     },
     toggleMute: (state) => {
       state.isMuted = !state.isMuted;
@@ -328,6 +333,7 @@ const audioPlayerSlice = createSlice({
 
 export const {
   resetAudioPlayer,
+  setPlaylists,
   setPausedTime,
   setIsPlaying,
   setCurrentTime,
@@ -353,6 +359,8 @@ export const selectPreviousSong = (state: RootState) =>
 export const selectQueue = (state: RootState) => state.audioPlayer.queue;
 export const selectCurrentTime = (state: RootState) =>
   state.audioPlayer.currentTime;
+export const selectPlaylists = (state: RootState) =>
+  state.audioPlayer.playlists;
 export const selectDuration = (state: RootState) => state.audioPlayer.duration;
 export const selectVolume = (state: RootState) => state.audioPlayer.volume;
 export const selectIsMuted = (state: RootState) => state.audioPlayer.isMuted;
