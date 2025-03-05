@@ -27,6 +27,7 @@ import { addLikedSong } from '../utils/api/addLikedSong';
 import { getUserPlaylists } from '../utils/api/getUserPlaylist';
 import { removeLikedSong } from '../utils/api/removeLikedSong';
 import useLikedSongs from '../hooks/useLikedSongs';
+import { removeSongFromPlaylist } from '../utils/api/removeSongFromPlaylist';
 
 export const SongContextMenu = ({
   page,
@@ -38,7 +39,6 @@ export const SongContextMenu = ({
   const [selectedSong, setSelectedSong] = useState<ISong | null>(null);
   const { fetchLikedSongs } = useLikedSongs();
   const userPlaylists =  useSelector(selectPlaylists);
-console.log(userPlaylists);
   const handleDialogOpenChange = (open: boolean) => {
     setIsDialogOpen(open);
     if (!open) {
@@ -61,6 +61,14 @@ console.log(userPlaylists);
         song, 
         userId: userId as string 
       });
+      setIsDialogOpen(false)
+      setSelectedSong(null)
+
+    await getUserPlaylists(userId).then((res) => {dispatch(setPlaylists(res.data))});
+  }
+
+  const handleRemoveFromPlaylist = async (userId:string, name: string, title: string,) => {
+    await removeSongFromPlaylist(userId, name, title)
       setIsDialogOpen(false)
       setSelectedSong(null)
 
@@ -122,20 +130,22 @@ console.log(userPlaylists);
               );
 
               return (
-                <ContextMenuItem
-                  key={name} 
-                  onSelect={() => handleAddToPlaylist(name, song, userId)}
-                >
+                <div id="playlistHandlers" key={name} >
                   {isSongInPlaylist ? (
-                    <>
+                    <ContextMenuItem
+                      
+                      onSelect={() => handleRemoveFromPlaylist(userId, name, song.title)}
+                    >
                       <MinusCircleIcon className="mr-2" /> {name}
-                    </>
+                    </ContextMenuItem>
                   ) : (
-                    <>
+                    <ContextMenuItem
+                      onSelect={() => handleAddToPlaylist(name, song, userId)}
+                    >
                       <PlusCircleIcon className="mr-2" /> {name}
-                    </>
+                    </ContextMenuItem>
                   )}
-                </ContextMenuItem>
+                </div>
               );
             })}
           </ContextMenuSubContent>
