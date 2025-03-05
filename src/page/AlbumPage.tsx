@@ -1,12 +1,9 @@
 import { useLoaderData } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   selectIsPlaying,
-  selectPlaylists,
-  setPlaylists,
 } from "../slices/audioPlayerSlice";
 import { IAlbum } from "../types/IAlbum";
-import { AppDispatch } from "../store";
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -17,14 +14,11 @@ import { Song
  import { useEffect, useState } from "react";
 import { Spinner } from "../components/ui/spinner";
 import { Authors } from "../components/Authors";
-import { getUserPlaylists } from "../utils/api/getUserPlaylist";
 import { SongContextMenu } from "../components/SongContextMenu";
 
 const AlbumPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const userPlaylists =  useSelector(selectPlaylists);
   const album = useLoaderData() as IAlbum;
-  const dispatch = useDispatch<AppDispatch>();
   const isPlaying = useSelector(selectIsPlaying);
   const { user } = useUser();
   if (!user) throw new Error("User not authenticated");
@@ -33,13 +27,7 @@ const AlbumPage = () => {
     if (album) {
       setLoading(false);
     }
-
-    if(user && userPlaylists?.length === 0) {
-      getUserPlaylists(user.id).then((res) => {
-        dispatch(setPlaylists(res.data));
-      });
-    }
-  }, [album,userPlaylists]);
+  }, [album]);
 
   return (
     <div className="col-span-7 row-span-11 h-[calc(100vh-200px)] overflow-y-auto">
@@ -78,9 +66,10 @@ const AlbumPage = () => {
                 albumId: album.id
               }}
               userId={user.id}
-              userPlaylists={userPlaylists}
+              page={0}
+              album={album}
             />
-        </ContextMenu>
+          </ContextMenu>
       ))}
       </div>
       </>)}

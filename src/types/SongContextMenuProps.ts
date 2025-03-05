@@ -1,10 +1,9 @@
 import { IAlbum } from "./IAlbum";
-import { IPlaylistEntry } from "./IPlaylistEntry";
 import { ISong } from "./ISong";
 
 export type SongContextMenuProps = {
+    page: number;
     song: ISong;
-    album: IAlbum;
+    album?: IAlbum;
     userId: string;
-    userPlaylists: IPlaylistEntry[];
 };
