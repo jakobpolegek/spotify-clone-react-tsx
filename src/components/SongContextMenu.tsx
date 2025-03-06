@@ -26,18 +26,18 @@ import { addToPlaylist } from '../utils/api/addToPlaylist';
 import { addLikedSong } from '../utils/api/addLikedSong';
 import { getUserPlaylists } from '../utils/api/getUserPlaylist';
 import { removeLikedSong } from '../utils/api/removeLikedSong';
-import useLikedSongs from '../hooks/useLikedSongs';
 import { removeSongFromPlaylist } from '../utils/api/removeSongFromPlaylist';
 
 export const SongContextMenu = ({
   page,
   song,
-  userId
+  userId,
+  onSongsChange
 }: SongContextMenuProps) => {
   const dispatch = useDispatch();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSong, setSelectedSong] = useState<ISong | null>(null);
-  const { fetchLikedSongs } = useLikedSongs();
+
   const userPlaylists =  useSelector(selectPlaylists);
   const handleDialogOpenChange = (open: boolean) => {
     setIsDialogOpen(open);
@@ -46,12 +46,27 @@ export const SongContextMenu = ({
     }
   };
 
+  const handleRemoveFromPlaylist = async (userId:string, name:string, title: string,) => {
+    await removeSongFromPlaylist(userId, name, title);
+    setIsDialogOpen(false);
+    setSelectedSong(null);
+
+    if (onSongsChange) {
+      await onSongsChange();
+    }
+
+    await getUserPlaylists(userId).then((res) => {dispatch(setPlaylists(res.data))});
+  }
+  
   const removeSong = async (song: ISong) => {
     try {
       await removeLikedSong(userId, song);
-      await fetchLikedSongs();
+
+      if (onSongsChange) {
+        await onSongsChange();
+      }
     } catch (err) {
-      throw new Error(`TThere was a problem removing the liked song: ${err}`);
+      throw new Error(`There was a problem removing the liked song: ${err}`);
     }
   };
   
@@ -61,14 +76,6 @@ export const SongContextMenu = ({
         song, 
         userId: userId as string 
       });
-      setIsDialogOpen(false)
-      setSelectedSong(null)
-
-    await getUserPlaylists(userId).then((res) => {dispatch(setPlaylists(res.data))});
-  }
-
-  const handleRemoveFromPlaylist = async (userId:string, name: string, title: string,) => {
-    await removeSongFromPlaylist(userId, name, title)
       setIsDialogOpen(false)
       setSelectedSong(null)
 
@@ -133,7 +140,6 @@ export const SongContextMenu = ({
                 <div id="playlistHandlers" key={name} >
                   {isSongInPlaylist ? (
                     <ContextMenuItem
-                      
                       onSelect={() => handleRemoveFromPlaylist(userId, name, song.title)}
                     >
                       <MinusCircleIcon className="mr-2" /> {name}

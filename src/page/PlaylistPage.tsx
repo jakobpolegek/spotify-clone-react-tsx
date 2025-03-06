@@ -15,7 +15,7 @@ const PlaylistPage = () => {
   const { playlistName } = useParams();
   const { user } = useUser();
   if (!user) throw new Error("User not authenticated");
-  const { playlistSongs, loading } = usePlaylistSongs(playlistName || '');
+  const { playlistSongs, loading, fetchPlaylistSongs } = usePlaylistSongs(playlistName || '');
   const isPlaying = useSelector(selectIsPlaying);
 
   return (
@@ -38,6 +38,7 @@ const PlaylistPage = () => {
                   song={song}
                   userId={user.id}
                   page={2}
+                  onSongsChange={fetchPlaylistSongs}
                 />
               </ContextMenu>
             ))}

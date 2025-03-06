@@ -11,7 +11,7 @@ import { useUser } from "@clerk/clerk-react";
 import { SongContextMenu } from "../components/SongContextMenu";
 
 const LikedSongsPage = () => {
-  const { likedSongs, loading } = useLikedSongs();
+  const { likedSongs, loading, fetchLikedSongs } = useLikedSongs();
   const { user } = useUser();
   if (!user) throw new Error("User not authenticated");
   const isPlaying = useSelector(selectIsPlaying);
@@ -35,6 +35,7 @@ const LikedSongsPage = () => {
                 <SongContextMenu
                   song={song}
                   userId={user.id}
+                  onSongsChange={fetchLikedSongs}
                   page={1}
                 />
               </ContextMenu>
