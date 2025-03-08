@@ -3,7 +3,7 @@ import { useUser } from "@clerk/clerk-react";
 import { getPlaylistSongs } from "../utils/api/getPlaylistSongs";
 import { ISong } from "../types/ISong";
 
-const usePlaylistSongs = (playlistName:string) => {
+const usePlaylistSongs = (playlistId:string) => {
   const [playlistSongs, setPlaylistSongs] = useState<ISong[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const { user } = useUser();
@@ -13,21 +13,22 @@ const usePlaylistSongs = (playlistName:string) => {
     setLoading(true);
     try {
       if (user.id) {
-        const songs = await getPlaylistSongs(user.id,playlistName);
+        const songs = await getPlaylistSongs(playlistId,user.id);
         setPlaylistSongs(songs);
       }
     } catch (err) {
       throw new Error(`Failed to fetch liked songs: ${err}`);
-    } finally {
+    } finally{
       setLoading(false);
     }
+
   };
 
   useEffect(() => {
     if (user.id) {
       fetchPlaylistSongs();
     }
-  }, [user.id,playlistName]);
+  }, [user.id,playlistId]);
 
   return { playlistSongs, loading, fetchPlaylistSongs };
 };

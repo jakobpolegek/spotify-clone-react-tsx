@@ -6,5 +6,6 @@ export type SongContextMenuProps = {
     song: ISong;
     album?: IAlbum;
     userId: string;
+    playlistId?: string;
     onSongsChange?: () => void | Promise<void>; 
 };

@@ -2,10 +2,16 @@ import { getSupabaseClient } from "../supabase";
 import { ISong } from "../../types/ISong";
 
 export const addToPlaylist = async ({
+  playlistId,
   playlistName,
   song,
   userId
-}: { playlistName: string, song: ISong, userId: string }) => {
+}: { 
+  playlistId: string | null, 
+  playlistName?: string, 
+  song: ISong, 
+  userId: string 
+}) => {
   try {
     const supabase = getSupabaseClient();
     
@@ -13,19 +19,51 @@ export const addToPlaylist = async ({
       throw new Error("Authors array is empty.");
     }
 
-    const existingRecordsPromises = song.authors.map(author =>
-      supabase
+    if (!playlistId && !playlistName) {
+      throw new Error("playlistName is required when creating a new playlist.");
+    }
+
+    if (!playlistId) {
+      const { data: existingPlaylist, error: fetchError } = await supabase
         .from("playlists")
-        .select("*")
+        .select("id")
         .eq("user_id", userId)
         .eq("name", playlistName)
+        .single();
+
+      if (fetchError && fetchError.code !== "PGRST116") { // Ignore "No rows found" error
+        throw fetchError;
+      }
+
+      if (existingPlaylist) {
+        playlistId = existingPlaylist.id;
+      } else {
+        const { data: newPlaylist, error: insertError } = await supabase
+          .from("playlists")
+          .insert({ 
+            user_id: userId, 
+            name: playlistName
+          })
+          .select("id")
+          .single();
+
+        if (insertError) throw insertError;
+        playlistId = newPlaylist!.id;
+      }
+    }
+
+    const existingRecordsPromises = song.authors.map(author =>
+      supabase
+        .from("playlistSongs")
+        .select("*")
+        .eq("playlistId", playlistId)
         .eq("albumId", song.albumId)
         .eq("title", song.title)
         .eq("authorId", author.id)
     );
 
     const existingRecordsResults = await Promise.all(existingRecordsPromises);
-    
+
     const newAuthors = song.authors.filter((_, index) => {
       const { data } = existingRecordsResults[index];
       return !data || data.length === 0;
@@ -41,15 +79,15 @@ export const addToPlaylist = async ({
     }
 
     const insertData = newAuthors.map(author => ({
-      user_id: userId,
-      name: playlistName,
+      playlistId,
       albumId: song.albumId,
       title: song.title,
-      authorId: author.id
+      authorId: author.id,
+      user_id: userId
     }));
 
     const results = await Promise.all(
-      insertData.map(entry => supabase.from("playlists").insert(entry))
+      insertData.map(entry => supabase.from("playlistSongs").insert(entry))
     );
 
     results.forEach(({ error }, index) => {

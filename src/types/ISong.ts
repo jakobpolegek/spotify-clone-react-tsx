@@ -7,4 +7,5 @@ export interface ISong {
   cover?: string; 
   source?: string; 
   bucketFolderName?: string; 
+  name?: string;
 }

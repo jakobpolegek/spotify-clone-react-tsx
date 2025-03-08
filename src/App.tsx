@@ -105,7 +105,7 @@ const router = createBrowserRouter(
         errorElement={<ErrorPage />}
       />
       <Route
-        path="/playlist/:playlistName"
+        path="/playlist/:playlistId"
         element={
           <>
             <SignedIn>

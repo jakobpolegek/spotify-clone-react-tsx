@@ -1,16 +1,20 @@
+import { ISong } from "../../types/ISong";
 import { getSupabaseClient } from "../supabase";
 
-export const removeSongFromPlaylist = async (userId: string, playlistName: string, title:string) => {
+export const removeSongFromPlaylist = async (
+    playlistId: string | null, 
+    song: ISong, 
+    userId: string 
+) => {
   try {
     const supabase = getSupabaseClient();
     await supabase
-    .from("playlists")
+    .from("playlistSongs")
     .delete()
-    .match({
-      user_id: userId,
-      name:playlistName,
-      title: title,
-    })
+    .eq("user_id", userId)
+    .eq("playlistId", playlistId)
+    .eq("title", song.title)
+    .eq("albumId", song.albumId);
 
     return { success: true, message: "Song removed successfully." };
   } catch (error) {

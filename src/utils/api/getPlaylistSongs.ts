@@ -2,15 +2,16 @@ import { IPlaylistSong } from "../../types/IPlaylistSong";
 import { getSupabaseClient } from "../supabase";
 import { ISong } from "../../types/ISong";
 
-export const getPlaylistSongs = async (userId: string, playlistName: string): Promise<ISong[]> => {
+export const getPlaylistSongs = async (playlistId: string, userId: string): Promise<ISong[]> => {
   try {
     const supabase = getSupabaseClient();
-    
+
     const { data: playlistEntries, error } = await supabase
-      .from("playlists")
+      .from("flattened_playlist_songs")
       .select(`
         title,
         albumId,
+        name,
         albums:albumId (
           cover,
           bucketFolderName
@@ -21,11 +22,11 @@ export const getPlaylistSongs = async (userId: string, playlistName: string): Pr
         ),
         createdAt
       `)
+      .eq("playlistId", playlistId)
       .eq("user_id", userId)
-      .eq("name", playlistName)
       .order("createdAt", { ascending: false })
       .returns<IPlaylistSong[]>();
-
+      
     if (error) {
       throw new Error("Error fetching playlist songs: " + error.message);
     }
@@ -38,20 +39,21 @@ export const getPlaylistSongs = async (userId: string, playlistName: string): Pr
 
     for (const entry of playlistEntries) {
       const key = `${entry.title}_${entry.albumId}`;
-      
+
       if (!songMap[key]) {
         songMap[key] = {
           title: entry.title,
           albumId: entry.albumId,
           cover: entry.albums.cover,
           bucketFolderName: entry.albums.bucketFolderName,
+          name: entry.name,
           authors: [entry.authors]
         };
       } else {
         const authorExists = songMap[key].authors.some(
           author => author.id === entry.authors.id
         );
-        
+
         if (!authorExists) {
           songMap[key].authors.push(entry.authors);
         }
@@ -76,7 +78,6 @@ export const getPlaylistSongs = async (userId: string, playlistName: string): Pr
         song.source = signedUrlData?.signedUrl;
       })
     );
-
     return Object.values(songMap);
   } catch (error) {
     throw new Error("Error fetching playlist songs: " + error);

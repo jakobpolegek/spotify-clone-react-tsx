@@ -24,7 +24,6 @@ import { SongContextMenuProps } from '../types/SongContextMenuProps';
 import { ISong } from '../types/ISong';
 import { addToPlaylist } from '../utils/api/addToPlaylist';
 import { addLikedSong } from '../utils/api/addLikedSong';
-import { getUserPlaylists } from '../utils/api/getUserPlaylist';
 import { removeLikedSong } from '../utils/api/removeLikedSong';
 import { removeSongFromPlaylist } from '../utils/api/removeSongFromPlaylist';
 
@@ -32,12 +31,12 @@ export const SongContextMenu = ({
   page,
   song,
   userId,
+  playlistId,
   onSongsChange
 }: SongContextMenuProps) => {
   const dispatch = useDispatch();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSong, setSelectedSong] = useState<ISong | null>(null);
-
   const userPlaylists =  useSelector(selectPlaylists);
   const handleDialogOpenChange = (open: boolean) => {
     setIsDialogOpen(open);
@@ -46,18 +45,36 @@ export const SongContextMenu = ({
     }
   };
 
-  const handleRemoveFromPlaylist = async (userId:string, name:string, title: string,) => {
-    await removeSongFromPlaylist(userId, name, title);
-    setIsDialogOpen(false);
-    setSelectedSong(null);
-
-    if (onSongsChange) {
-      await onSongsChange();
+  const handleRemoveFromPlaylist = async () => {
+    if(playlistId){
+      await removeSongFromPlaylist(playlistId, song, userId);
+      setIsDialogOpen(false);
+      setSelectedSong(null);
+  
+      if (onSongsChange) {
+        await onSongsChange();
+      }
     }
 
-    await getUserPlaylists(userId).then((res) => {dispatch(setPlaylists(res.data))});
   }
-  
+ 
+  const handleAddToPlaylist = async (playlistId:string, playlistName?: string) => {
+    if(playlistId){
+      await addToPlaylist({ 
+        playlistId, 
+        playlistName,
+        song, 
+        userId
+      });
+      setIsDialogOpen(false)
+      setSelectedSong(null)
+
+      if (onSongsChange) {
+        await onSongsChange();
+      };
+    }
+  }
+
   const removeSong = async (song: ISong) => {
     try {
       await removeLikedSong(userId, song);
@@ -69,18 +86,6 @@ export const SongContextMenu = ({
       throw new Error(`There was a problem removing the liked song: ${err}`);
     }
   };
-  
-  const handleAddToPlaylist = async (name: string, song: ISong, userId:string) => {
-    await addToPlaylist({ 
-        playlistName: name, 
-        song, 
-        userId: userId as string 
-      });
-      setIsDialogOpen(false)
-      setSelectedSong(null)
-
-    await getUserPlaylists(userId).then((res) => {dispatch(setPlaylists(res.data))});
-  }
 
   const addSongToLikedSongs = async (newSong: ISong) => {
       try {
@@ -131,32 +136,26 @@ export const SongContextMenu = ({
               <PlusIcon className="mr-2" /> Create new playlist...
             </ContextMenuItem>
             <ContextMenuSeparator />
-            {[...new Set(userPlaylists.map(p => p.name))].map((name) => {
-              const isSongInPlaylist = userPlaylists.some(
-                p => p.name === name && p.title === song.title // Assuming `song` is defined somewhere
-              );
-
+            {userPlaylists.map((playlist) => {
               return (
-                <div id="playlistHandlers" key={name} >
-                  {isSongInPlaylist ? (
+                <div id="playlistHandlers" key={playlist.id}>
                     <ContextMenuItem
-                      onSelect={() => handleRemoveFromPlaylist(userId, name, song.title)}
+                      onSelect={() => handleAddToPlaylist(playlist.id)}
                     >
-                      <MinusCircleIcon className="mr-2" /> {name}
+                      <PlusCircleIcon className="mr-2" /> {playlist.name}
                     </ContextMenuItem>
-                  ) : (
-                    <ContextMenuItem
-                      onSelect={() => handleAddToPlaylist(name, song, userId)}
-                    >
-                      <PlusCircleIcon className="mr-2" /> {name}
-                    </ContextMenuItem>
-                  )}
                 </div>
               );
             })}
           </ContextMenuSubContent>
         </ContextMenuSub>
-
+        {page === 2  && playlistId && 
+          <ContextMenuItem
+            onSelect={() => handleRemoveFromPlaylist()}
+          >
+            <MinusCircleIcon className="mr-2" /> Remove from this playlist
+          </ContextMenuItem>
+        }
         <ContextMenuSeparator />
         <ContextMenuItem
           onClick={() => dispatch(addToQueue(song))}

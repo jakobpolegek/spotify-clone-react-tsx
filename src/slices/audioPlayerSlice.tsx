@@ -1,10 +1,10 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import AudioContextService from "../contexts/audioContextService";
 import { IAudioPlayerState } from "../types/IAudioPlayerState";
 import { ISong } from "../types/ISong";
 import { AppDispatch, RootState } from "../store";
 import { IAudioPayload } from "../types/IAudioPayload";
-import { getUserPlaylists } from "../utils/api/getUserPlaylist";
+import { IPlaylist } from "../types/IPlaylist";
 
 let currentAudioSource: AudioBufferSourceNode | null = null;
 let currentAudioBuffer: AudioBuffer | null = null;
@@ -246,7 +246,7 @@ const audioPlayerSlice = createSlice({
         AudioContextService.setVolume(action.payload);
       }
     },
-    setPlaylists: (state, action) => {
+    setPlaylists: (state, action: PayloadAction<IPlaylist[]>) => {
       state.playlists = action.payload;
     },
     toggleMute: (state) => {
