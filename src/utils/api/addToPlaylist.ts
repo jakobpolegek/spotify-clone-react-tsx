@@ -31,7 +31,7 @@ export const addToPlaylist = async ({
         .eq("name", playlistName)
         .single();
 
-      if (fetchError && fetchError.code !== "PGRST116") { // Ignore "No rows found" error
+      if (fetchError && fetchError.code !== "PGRST116") {
         throw fetchError;
       }
 
