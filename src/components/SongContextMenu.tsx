@@ -26,6 +26,7 @@ import { addToPlaylist } from '../utils/api/addToPlaylist';
 import { addLikedSong } from '../utils/api/addLikedSong';
 import { removeLikedSong } from '../utils/api/removeLikedSong';
 import { removeSongFromPlaylist } from '../utils/api/removeSongFromPlaylist';
+import { getPlaylists } from '../utils/api/getPlaylists';
 
 export const SongContextMenu = ({
   page,
@@ -38,11 +39,23 @@ export const SongContextMenu = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSong, setSelectedSong] = useState<ISong | null>(null);
   const userPlaylists =  useSelector(selectPlaylists);
-  const handleDialogOpenChange = (open: boolean) => {
+
+  const fetchPlaylists = async () => {
+    try {
+      const playlists = await getPlaylists(userId);
+      dispatch(setPlaylists(playlists));
+    } catch (error) {
+      console.error("Failed to fetch playlists:", error);
+    }
+  };
+
+  const handleDialogOpenChange = async (open: boolean) => {
     setIsDialogOpen(open);
     if (!open) {
       setSelectedSong(null);
     }
+
+    await fetchPlaylists();
   };
 
   const handleRemoveFromPlaylist = async () => {
@@ -58,21 +71,17 @@ export const SongContextMenu = ({
 
   }
  
-  const handleAddToPlaylist = async (playlistId:string, playlistName?: string) => {
-    if(playlistId){
-      await addToPlaylist({ 
-        playlistId, 
-        playlistName,
-        song, 
-        userId
-      });
-      setIsDialogOpen(false)
-      setSelectedSong(null)
+  const handleAddToPlaylist = async (song:ISong,userId:string,playlistId?:string,playlistName?: string) => {
+    await addToPlaylist({ 
+      song: song,
+      userId: userId,
+      playlistId: playlistId,
+      playlistName: playlistName
+    });
+    setIsDialogOpen(false)
+    setSelectedSong(null)
 
-      if (onSongsChange) {
-        await onSongsChange();
-      };
-    }
+    await fetchPlaylists();
   }
 
   const removeSong = async (song: ISong) => {
@@ -140,7 +149,10 @@ export const SongContextMenu = ({
               return (
                 <div id="playlistHandlers" key={playlist.id}>
                     <ContextMenuItem
-                      onSelect={() => handleAddToPlaylist(playlist.id)}
+                      onSelect={() => handleAddToPlaylist(
+                        song=song,
+                        userId=userId,
+                        playlistId=playlist.id)}
                     >
                       <PlusCircleIcon className="mr-2" /> {playlist.name}
                     </ContextMenuItem>

@@ -9,24 +9,15 @@ import {
   import { Button } from "../ui/button"
   import { Input } from "../ui/input"
   import { Label } from "../ui/label"
-  import { ISong } from "../../types/ISong"
+  import { ICreatePlaylistDialogProps } from "../../types/ICreatePlaylistDialogProps"
 import { useEffect, useState } from "react"
-  
-  interface CreatePlaylistDialogProps {
-    open: boolean
-    onOpenChange: (open: boolean) => void
-    selectedSong: ISong | null
-    userId: string
-    onCreatePlaylist: (name: string, song: ISong, userId: string) => void
-  }
-  
   const CreatePlaylistDialog = ({
     open,
     onOpenChange,
     selectedSong,
     userId,
     onCreatePlaylist,
-  }: CreatePlaylistDialogProps) => {
+  }: ICreatePlaylistDialogProps) => {
     const [playlistName, setPlaylistName] = useState("")
   
     useEffect(() => {
@@ -38,7 +29,16 @@ import { useEffect, useState } from "react"
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault()
       if (selectedSong && playlistName.trim()) {
-        onCreatePlaylist(playlistName, selectedSong, userId)
+        onCreatePlaylist(
+          selectedSong,
+          userId, 
+          undefined,
+          playlistName.trim()
+        )
+      }
+
+      if (onOpenChange) {
+        onOpenChange(false)
       }
     }
   

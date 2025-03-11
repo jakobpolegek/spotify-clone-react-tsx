@@ -28,7 +28,7 @@ const NavigationSidebar = () => {
 
   useEffect(() => {
     fetchPlaylists();
-  }, [userPlaylists]);
+  }, [user?.id]);
 
   return (
     <div className="ml-5 col-span-1 row-span-11 bg-slate-800 rounded p-4">
