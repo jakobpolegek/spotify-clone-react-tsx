@@ -108,7 +108,7 @@ export const SongContextMenu = ({
 
   return (
     <>
-      <ContextMenuContent className="bg-slate-800 text-white border-0">
+      <ContextMenuContent className="bg-slate-900 text-white border-0">
         {page === 1 ? 
           <ContextMenuItem
             onClick={() => {
@@ -134,7 +134,7 @@ export const SongContextMenu = ({
           <ContextMenuSubTrigger>
             <ListPlusIcon className="mr-2" /> Add to playlist
           </ContextMenuSubTrigger>
-          <ContextMenuSubContent className="bg-slate-800 text-white border-0 w-48">
+          <ContextMenuSubContent className="bg-slate-900 text-white border-0 w-48">
             <ContextMenuItem
               onSelect={() => {
                 setSelectedSong(song);

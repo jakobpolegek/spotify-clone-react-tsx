@@ -5,12 +5,17 @@ import {
   ContextMenu,
   ContextMenuTrigger,
 } from "../components/ui/context-menu";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu"
 import { Spinner } from "../components/ui/spinner";
 import { PlayCircleIcon, EllipsisIcon } from "lucide-react";
 import { useUser } from "@clerk/clerk-react";
 import usePlaylistSongs from "../hooks/usePlaylistSongs";
 import { useParams } from "react-router-dom";
 import { SongContextMenu } from "../components/SongContextMenu";
+import { PlaylistDropDownMenu } from "../components/PlaylistDropdownMenu";
 
 const PlaylistPage = () => {
   const { playlistId } = useParams();
@@ -26,7 +31,7 @@ const PlaylistPage = () => {
         <Spinner show={loading} size="large" />
       ) : (
         <div className="mr-5 col-span-9 row-span-11 bottom-0 bg-slate-800 rounded">
-          <div id="header" className="border-b-4 border-slate-900 pb-4">
+          <div id="header" className="border-b-8 border-slate-900 pb-4">
             {playlistSongs.length > 0 ? (
               <p className="text-8xl font-extrabold ml-10 mt-10 text-white">
                 {playlistSongs[0].name}
@@ -43,11 +48,21 @@ const PlaylistPage = () => {
           </div>
           <div id="playlistControls" className="flex flex-row ml-10">
             <PlayCircleIcon className="mt-6 text-primary h-12 w-12"/>
-            <EllipsisIcon
-              className="mt-6 text-primary ml-4 h-12 w-12"
-              size={24}
-              onClick={() => fetchPlaylistSongs()}
-            />
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <EllipsisIcon
+                    className="mt-6 text-primary ml-4 h-12 w-12"
+                    size={24}
+                  />
+                </DropdownMenuTrigger>
+                <PlaylistDropDownMenu
+                    song={playlistSongs[0]}
+                    userId={user.id}
+                    page={2}
+                    playlistId={playlistId}
+                    onSongsChange={fetchPlaylistSongs}
+                  />
+            </DropdownMenu>
           </div>
           <div className="flex flex-col items-left justify-left max-h-screen grow mt-12">
             <div id="songs" className="m-2 flex flex-col">

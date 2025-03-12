@@ -45,7 +45,7 @@ import { useEffect, useState } from "react"
     return (
       <Dialog open={open} onOpenChange={onOpenChange} >
         <DialogContent 
-          className="sm:max-w-[425px] bg-slate-800 text-white"
+          className="sm:max-w-[425px] bg-slate-900 text-white"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <form onSubmit={handleSubmit}>
