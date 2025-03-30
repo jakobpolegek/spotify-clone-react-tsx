@@ -91,7 +91,6 @@ export const SongContextMenu = ({
       setSelectedSong(null);
 
       if (onSongsChange) {
-        console.log("kličem refresh!")
         await onSongsChange();
       }
     } catch (err) {
