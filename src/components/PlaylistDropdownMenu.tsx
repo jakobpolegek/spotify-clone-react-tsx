@@ -30,19 +30,19 @@ import {
   } from "lucide-react";
 import FormDialog from './FormDialog';
 import CreatePlaylistForm from './forms/CreatePlaylistForm';
-import { setPlaylists } from '../slices/audioPlayerSlice';
+import { setPlaylists, addToQueue } from '../slices/audioPlayerSlice';
 import { ISong } from '../types/ISong';
 import { getPlaylists } from '../utils/api/getPlaylists';
 import { removePlaylist } from '../utils/api/removePlaylist';
 import { useNavigate } from 'react-router';
 
 export const PlaylistDropDownMenu = ({
-  page,
-  song,
+  songs,
   userId,
   playlistId,
-  onSongsChange
-}: any) => {
+  page,
+  onSongsChange,
+}: {songs:ISong[], userId: string, playlistId: string|null, page:number, onSongsChange:any}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -53,7 +53,7 @@ export const PlaylistDropDownMenu = ({
       const playlists = await getPlaylists(userId);
       dispatch(setPlaylists(playlists));
     } catch (error) {
-      console.error("Failed to fetch playlists:", error);
+      throw new Error("Error while fetching playlists: "+error)
     }
   };
 
@@ -76,18 +76,26 @@ export const PlaylistDropDownMenu = ({
     }
   }
 
+  const handleAddToQueue = async () => {
+    if(playlistId){
+      songs.map((song)=>{
+        dispatch(addToQueue(song))
+      })   
+    }
+  }
+
   return (
     <>
         <DropdownMenuContent className="bg-slate-900 text-white border-0">
             <DropdownMenuGroup>
-                <DropdownMenuItem>
-                    <ListEndIcon/> Add to queue
+                <DropdownMenuItem onClick={handleAddToQueue}>
+                    <ListEndIcon /> Add to queue
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem  
                 onSelect={() => {
-                    setSelectedSong(song);
+                    //setSelectedSong(song);
                     setIsDialogOpen(true);
                 }}>
                 <PencilIcon/> Edit playlist

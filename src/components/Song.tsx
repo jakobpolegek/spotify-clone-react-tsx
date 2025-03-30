@@ -6,15 +6,18 @@ import {
   import { Button } from "../components/ui/button";
 import {
     selectCurrentlyPlaying,
+    playAudio
   } from "../slices/audioPlayerSlice";
-import {  useSelector } from "react-redux";
+import {  useDispatch, useSelector } from "react-redux";
 import { useAudioControls } from "../utils/songUtils";
 import { Link } from "react-router-dom";
 import { Authors } from "./Authors";
+import { AppDispatch } from "../store";
 
 export const Song = ({ song, isPlaying, page = 0 }: { song:ISong, isPlaying:boolean, page:number}) => {
   const currentlyPlaying = useSelector(selectCurrentlyPlaying);
   const { handlePlay, handlePause } = useAudioControls();
+  const dispatch:AppDispatch = useDispatch();
 
   return (
     <div
@@ -29,13 +32,13 @@ export const Song = ({ song, isPlaying, page = 0 }: { song:ISong, isPlaying:bool
         <Button
           variant="link"
           onClick={() => {
-            handlePlay(song);
+            song.source===currentlyPlaying?.source ? dispatch(playAudio()) : handlePlay(song);
           }}
         >
           <Play />
         </Button>
       )}
-      {page === 1 ? (
+      {page !== 0 ? (
         <img className="m-1 ml-5 w-16 h-16" src={song.cover} />
       ) : null}
       <div id="song-metadata" className="flex flex-col ml-4">

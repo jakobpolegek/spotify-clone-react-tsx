@@ -22,7 +22,7 @@ const NavigationSidebar = () => {
         dispatch(setPlaylists(playlists));
       }
     } catch (error) {
-      console.error("Failed to fetch playlists:", error);
+      throw new Error("Failed to fetch playlists: "+error);
     }
   };
 
@@ -31,7 +31,7 @@ const NavigationSidebar = () => {
   }, [user?.id]);
 
   return (
-    <div className="ml-5 col-span-1 row-span-11 bg-slate-800 rounded p-4">
+    <div className="ml-4 col-span-1 row-span-11 bg-slate-800 rounded p-4">
       <Link to="/likedSongs" className="flex items-center mb-4 mt-2">
         <HeartIcon color="#0C969C" />
         <h1 className="font-bold text-primary text-2xl ml-4">Liked songs</h1>

@@ -9,7 +9,7 @@ export const Album = ({ album }: { album: IAlbum }) => {
         <img src={album.cover} className="w-max h-max mb-1" alt={album.title} />
         <h1 className="text-2xl font-bold">{album.title}</h1>
       </Link>
-      <Authors authors={album.authors} />
+      <Authors authors={album.authors} isHeader={false}/>
     </div>
   );
 };

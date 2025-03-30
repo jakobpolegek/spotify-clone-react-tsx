@@ -45,7 +45,7 @@ export const SongContextMenu = ({
       const playlists = await getPlaylists(userId);
       dispatch(setPlaylists(playlists));
     } catch (error) {
-      console.error("Failed to fetch playlists:", error);
+      throw new Error("Error while fetching playlists: "+error)
     }
   };
 
@@ -87,8 +87,11 @@ export const SongContextMenu = ({
   const removeSong = async (song: ISong) => {
     try {
       await removeLikedSong(userId, song);
+      setIsDialogOpen(false);
+      setSelectedSong(null);
 
       if (onSongsChange) {
+        console.log("kličem refresh!")
         await onSongsChange();
       }
     } catch (err) {
@@ -111,7 +114,7 @@ export const SongContextMenu = ({
       <ContextMenuContent className="bg-slate-900 text-white border-0">
         {page === 1 ? 
           <ContextMenuItem
-            onClick={() => {
+            onSelect={() => {
               const newSong: ISong = {
                 source: song.source,
                 albumId: song.albumId,

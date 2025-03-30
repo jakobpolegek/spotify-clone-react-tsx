@@ -129,7 +129,7 @@ export const playNextSong =
   () => (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState() as { audioPlayer: IAudioPlayerState };
 
-    if (state.audioPlayer.queue && state.audioPlayer.queue.length) {
+    if (state.audioPlayer.queue.length && state.audioPlayer.queue.length>0) {
       try {
         dispatch(playAudio(state.audioPlayer.queue[0]));
         dispatch(removeFirstFromQueue());
@@ -261,6 +261,12 @@ const audioPlayerSlice = createSlice({
     addToQueue: (state, action) => {
       state.queue.push(action.payload);
     },
+    setQueue: (state, action) => {
+      state.queue = action.payload;
+    },
+    clearQueue: (state) => {
+      state.queue = [];
+    },
     playNext: (state, action) => {
       state.queue.unshift(action.payload);
     },
@@ -268,12 +274,8 @@ const audioPlayerSlice = createSlice({
       const [, ...rest] = state.queue;
       state.queue = rest;
     },
-
     addToHistory: (state, action) => {
       state.history.unshift(action.payload);
-    },
-    clearQueue: (state) => {
-      state.queue = [];
     },
     removeFromHistory: (state) => {
       const [, ...rest] = state.history;
@@ -339,6 +341,8 @@ export const {
   setCurrentTime,
   setCurrentlyPlaying,
   addToQueue,
+  clearQueue,
+  setQueue,
   playNext,
   removeFirstFromQueue,
   addToHistory,

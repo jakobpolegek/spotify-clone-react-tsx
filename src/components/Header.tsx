@@ -16,7 +16,7 @@ const userButtonAppearance = {
 
 const Header = () => {
   return (
-    <div className="col-span-10 bg-slate-800 rounded ml-5 mr-5 mt-2">
+    <div className="col-span-10 bg-slate-800 rounded ml-4 mr-4 mt-2">
       <div className="flex mt-4">
         <div
           id="navigation"
@@ -35,7 +35,7 @@ const Header = () => {
             {" "}
             <Home className="text-primary " size={24} />
           </Link>
-          <Input className="w-2/6 mx-3" />
+          <Input className="w-2/6 mx-3 border-primary" />
           <Link to="/">
             {" "}
             <Search className="text-primary" size={24} />
