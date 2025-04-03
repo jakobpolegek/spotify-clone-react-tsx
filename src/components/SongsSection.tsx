@@ -17,6 +17,8 @@ import { ISong } from "../types/ISong";
 import { UserResource } from "@clerk/types";
 import { IAlbum } from "../types/IAlbum";
 import { Authors } from "./Authors";
+import { useEffect, useState } from "react";
+import { getPlaylistInfo } from "../utils/api/getPlaylistsInfo";
 
 const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange = null, album=null }:
   {
@@ -27,9 +29,25 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
     onSongsChange: any,
     album:IAlbum|null
   }) => {
-
+  const [coverImage, setCoverImage] = useState(null);
+  const [collectionName, setCollectionName] = useState(null);
   const dispatch: AppDispatch = useDispatch();
   const isPlaying = useSelector(selectIsPlaying);
+
+  const fetchPlaylistInfo = async () =>{
+    if (playlistId){
+      const playListInfo = await getPlaylistInfo(playlistId);
+      playListInfo.cover_image_url && setCoverImage(playListInfo.cover_image_url);
+      setCollectionName(playListInfo.name);
+    }
+  }
+
+  useEffect(()=>{
+    if(page===2&&playlistId)
+    {
+      fetchPlaylistInfo();
+    }
+  },[playlistId])
 
   const handlePlaySongs = async () => {
     dispatch(clearQueue());
@@ -44,7 +62,7 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
           <div className="flex items-center mb-6">
             {page===1?
             <HeartIcon className="h-60 w-60 mb-4 ml-12 mt-12 text-primary"/>
-            :(page===2 ? <MusicIcon className="h-60 w-60 mb-4 ml-12 mt-12 text-primary"/>
+            :(page===2 ? (coverImage ? <img src={coverImage} className="h-60 w-60 mb-4 ml-12 mt-12" /> : <MusicIcon className="h-60 w-60 mb-4 ml-12 mt-12 text-primary"/>)
             :album&&<img src={album.cover} className="h-60 w-60 mb-4 ml-12 mt-12" />
             )}
             <div className="flex flex-col ml-6 mt-10">
@@ -74,6 +92,7 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
                   />
                 </DropdownMenuTrigger>
                 <PlaylistDropDownMenu
+                  playlistName={songs[0]?.name}
                   songs={songs}
                   userId={user.id}
                   page={page}
@@ -81,7 +100,6 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
                   onSongsChange={onSongsChange}
                 />
               </DropdownMenu>}
-
           </div>
           <div className="flex flex-col items-left justify-left grow mt-2">
             <div id="songs" className="m-2 flex flex-col">

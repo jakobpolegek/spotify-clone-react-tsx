@@ -28,8 +28,7 @@ import {
     PencilIcon,
     ListEndIcon
   } from "lucide-react";
-import FormDialog from './FormDialog';
-import CreatePlaylistForm from './forms/CreatePlaylistForm';
+import EditPlaylistForm from './forms/EditPlaylistForm';
 import { setPlaylists, addToQueue } from '../slices/audioPlayerSlice';
 import { ISong } from '../types/ISong';
 import { getPlaylists } from '../utils/api/getPlaylists';
@@ -40,9 +39,10 @@ export const PlaylistDropDownMenu = ({
   songs,
   userId,
   playlistId,
+  playlistName,
   page,
   onSongsChange,
-}: {songs:ISong[], userId: string, playlistId: string|null, page:number, onSongsChange:any}) => {
+}: {songs:ISong[], userId: string, playlistId: string|null, playlistName: string|undefined, page:number, onSongsChange:any}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -129,20 +129,17 @@ export const PlaylistDropDownMenu = ({
             </AlertDialog>
         </DropdownMenuContent>
 
-        <FormDialog
-            title="Edit playlist"
-            description="Change the name or picture of the playlist."
-            isOpen={isDialogOpen}
-            setIsOpen={setIsDialogOpen}
-        >
-        <CreatePlaylistForm
+
+        <EditPlaylistForm
+            id={playlistId ? playlistId:''}
+            name={playlistName}
             open={isDialogOpen}
             onOpenChange={handleDialogOpenChange}
             userId={userId}
             selectedSong={selectedSong}
             onCreatePlaylist={handleRemovePlaylist}
         />
-        </FormDialog> 
+
     </>
   );
 };

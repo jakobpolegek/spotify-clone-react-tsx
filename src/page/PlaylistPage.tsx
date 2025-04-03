@@ -10,10 +10,15 @@ const PlaylistPage = () => {
   if (!user) throw new Error("User not authenticated");
   if (!playlistId) throw new Error("Playlist ID is required");
   const { playlistSongs, loading, fetchPlaylistSongs } = usePlaylistSongs(playlistId);
-
+  
   return (
     loading ? <Spinner show={loading} size="large"/> :
-    <SongsSection user={user} songs={playlistSongs} page={2} playlistId={playlistId} onSongsChange={fetchPlaylistSongs} album={null}/>
+    <SongsSection user={user} 
+      songs={playlistSongs} 
+      page={2}
+      playlistId={playlistId} 
+      onSongsChange={fetchPlaylistSongs} 
+      album={null}/>
     );
 };
 export default PlaylistPage;

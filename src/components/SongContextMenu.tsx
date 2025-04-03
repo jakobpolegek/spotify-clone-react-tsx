@@ -17,7 +17,6 @@ import {
     PlusIcon,
     HeartCrackIcon,
   } from "lucide-react";
-import FormDialog from './FormDialog';
 import CreatePlaylistForm from './forms/CreatePlaylistForm';
 import { addToQueue, playNext, selectPlaylists, setPlaylists } from '../slices/audioPlayerSlice';
 import { SongContextMenuProps } from '../types/SongContextMenuProps';
@@ -182,21 +181,13 @@ export const SongContextMenu = ({
           <CircleArrowRightIcon className="mr-2" /> Play next
         </ContextMenuItem>
       </ContextMenuContent>
-
-      <FormDialog
-        title="Create new playlist"
-        description="Enter the name of the playlist you want to create"
-        isOpen={isDialogOpen}
-        setIsOpen={setIsDialogOpen}
-      >
-        <CreatePlaylistForm
-          open={isDialogOpen}
-          onOpenChange={handleDialogOpenChange}
-          userId={userId}
-          selectedSong={selectedSong}
-          onCreatePlaylist={handleAddToPlaylist}
-        />
-      </FormDialog>
+      <CreatePlaylistForm
+        open={isDialogOpen}
+        onOpenChange={handleDialogOpenChange}
+        userId={userId}
+        selectedSong={selectedSong}
+        onCreatePlaylist={handleAddToPlaylist}
+      />
     </>
   );
 };
