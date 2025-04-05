@@ -30,7 +30,7 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
     album:IAlbum|null
   }) => {
   const [coverImage, setCoverImage] = useState(null);
-  const [collectionName, setCollectionName] = useState(null);
+  const [collectionName, setCollectionName] = useState(songs[0]?.name);
   const dispatch: AppDispatch = useDispatch();
   const isPlaying = useSelector(selectIsPlaying);
 
@@ -68,7 +68,7 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
             <div className="flex flex-col ml-6 mt-10">
               {page===0&&<h4 className="">Album</h4>}
               <h1 className={`text-8xl font-extrabold text-white`}>
-                  {page===1?'Liked songs':(page===2 && songs[0] ? songs[0].name : album?.title)}
+                  {page===1?'Liked songs':(page===2 ? collectionName: album?.title)}
               </h1>
               <h3 className="mt-4 text-gray-400 flex flex-row">{page===0 && album ? <Authors authors={album.authors} isHeader={true}/>:
               <>
@@ -93,6 +93,7 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
                 </DropdownMenuTrigger>
                 <PlaylistDropDownMenu
                   playlistName={songs[0]?.name}
+                  playlistCover={coverImage || null}
                   songs={songs}
                   userId={user.id}
                   page={page}
@@ -108,21 +109,14 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
                   <ContextMenuTrigger>
                     <Song key={song.source} song={song} page={page} isPlaying={isPlaying} />
                   </ContextMenuTrigger>
-                  {(page === 2 && playlistId && onSongsChange) ?
-                    (<SongContextMenu
-                      song={song}
-                      userId={user.id}
-                      page={page}
-                      playlistId={playlistId}
-                      onSongsChange={onSongsChange}
-                    />) :
-                    (<SongContextMenu
-                      song={song}
-                      userId={user.id}
-                      page={page}
-                      onSongsChange={onSongsChange}
-                    />)}
-
+                  
+                  <SongContextMenu
+                    song={song}
+                    userId={user.id}
+                    page={page}
+                    playlistId={playlistId||undefined}
+                    onSongsChange={onSongsChange}
+                  />
                 </ContextMenu>
               ))}
             </div>

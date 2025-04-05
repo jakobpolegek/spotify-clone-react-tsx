@@ -12,42 +12,32 @@ import { IEditPlaylistDialogProps } from "../../types/IEditPlaylistDialogProps"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
 import { UploadCloudIcon } from "lucide-react"
 import { uploadAlbumCover } from "../../utils/api/uploadAlbumCover"
+import { updatePlaylistInfo } from "../../utils/api/updatePlaylistInfo"
 
 const EditPlaylistDialog = ({
   id,
   name,
   open,
   onOpenChange,
-  selectedSong,
   userId,
-  onCreatePlaylist,
+  onSavePlaylistChanges,
 }: IEditPlaylistDialogProps) => {
   const [playlistName, setPlaylistName] = useState(name);
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      setSelectedFile(file);
       
-      // Create preview
       const reader = new FileReader();
       reader.onload = (event) => {
         setPreviewUrl(event.target?.result as string);
       };
       reader.readAsDataURL(file);
-
-      // Start upload immediately
-      setUploading(true);
-      try {
-        id && await uploadAlbumCover(id,userId, file);
-      } catch (error) {
-        console.error("Upload failed:", error);
-        setPreviewUrl(null);
-      } finally {
-        setUploading(false);
-      }
     }
   };
 
@@ -61,22 +51,31 @@ const EditPlaylistDialog = ({
     if (!open) {
       setPlaylistName(name || "");
       setPreviewUrl(null);
+      setSelectedFile(null);
     }
   }, [open, name]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedSong && playlistName && playlistName.trim()) {
-      onCreatePlaylist(
-        selectedSong,
-        userId, 
-        undefined,
-        playlistName.trim()
-      );
-    }
+    
+    try {
+      if (id && playlistName && playlistName.trim()) {
+        setUploading(true);
+        const publicUrl = selectedFile ? await uploadAlbumCover(userId, selectedFile, id) : null;
+        await updatePlaylistInfo(id,{ name: playlistName, cover_image_url: publicUrl });
+      }
 
-    if (onOpenChange) {
-      onOpenChange(false);
+      if (onOpenChange) {
+        onOpenChange(false);
+      }
+
+      if (onSavePlaylistChanges) {
+        await onSavePlaylistChanges();
+      }
+    } catch (error) {
+      throw new Error("Error saving playlist changes:"+ error);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -95,7 +94,6 @@ const EditPlaylistDialog = ({
           </DialogHeader>
           
           <div className="flex flex-col items-center gap-4 py-4">
-            {/* Hidden file input */}
             <input
               type="file"
               ref={fileInputRef}
@@ -106,7 +104,6 @@ const EditPlaylistDialog = ({
               onClick={(e) => e.stopPropagation()}
             />
             
-            {/* Upload button with preview */}
             <div className="relative group">
               <button 
                 onClick={handleButtonClick}

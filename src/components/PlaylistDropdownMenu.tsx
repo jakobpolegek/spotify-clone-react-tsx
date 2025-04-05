@@ -1,16 +1,10 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
     DropdownMenuContent,
     DropdownMenuGroup,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuPortal,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
+    DropdownMenuSeparator
   } from "../components/ui/dropdown-menu"
 import {
 AlertDialog,
@@ -40,13 +34,11 @@ export const PlaylistDropDownMenu = ({
   userId,
   playlistId,
   playlistName,
-  page,
-  onSongsChange,
-}: {songs:ISong[], userId: string, playlistId: string|null, playlistName: string|undefined, page:number, onSongsChange:any}) => {
+  onSongsChange
+}: {songs:ISong[], userId: string, playlistId: string|null, playlistName: string|undefined,playlistCover: string|null, page:number, onSongsChange:any}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedSong, setSelectedSong] = useState<ISong | null>(null);
 
   const fetchPlaylists = async () => {
     try {
@@ -59,10 +51,6 @@ export const PlaylistDropDownMenu = ({
 
   const handleDialogOpenChange = async (open: boolean) => {
     setIsDialogOpen(open);
-    if (!open) {
-      setSelectedSong(null);
-    }
-
     await fetchPlaylists();
   };
 
@@ -70,7 +58,6 @@ export const PlaylistDropDownMenu = ({
     if(playlistId){
         await removePlaylist(playlistId, userId);
         setIsDialogOpen(false);
-        setSelectedSong(null);
         fetchPlaylists();
         navigate("/");
     }
@@ -95,10 +82,10 @@ export const PlaylistDropDownMenu = ({
             <DropdownMenuSeparator />
             <DropdownMenuItem  
                 onSelect={() => {
-                    //setSelectedSong(song);
                     setIsDialogOpen(true);
+                    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
                 }}>
-                <PencilIcon/> Edit playlist
+                <PencilIcon/> Edit playlist..
             </DropdownMenuItem>
             <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -136,8 +123,7 @@ export const PlaylistDropDownMenu = ({
             open={isDialogOpen}
             onOpenChange={handleDialogOpenChange}
             userId={userId}
-            selectedSong={selectedSong}
-            onCreatePlaylist={handleRemovePlaylist}
+            onSavePlaylistChanges={onSongsChange}
         />
 
     </>

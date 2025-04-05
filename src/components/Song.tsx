@@ -47,7 +47,7 @@ export const Song = ({ song, isPlaying, page = 0 }: { song:ISong, isPlaying:bool
             {song.title.replace(/^[0-9]{2}\s-\s/, "").replace(/\.mp3$/, "")}
           </h1>
         </Link>
-        <Authors authors={song.authors} />
+        <Authors authors={song.authors} isHeader={false}/>
       </div>
     </div>
   );
