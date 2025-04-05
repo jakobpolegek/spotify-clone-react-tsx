@@ -57,3 +57,25 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* Custom scrollbar */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #0C969C;
+  border-radius: 4px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #0a787e;
+}

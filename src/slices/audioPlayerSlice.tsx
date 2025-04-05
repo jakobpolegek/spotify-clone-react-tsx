@@ -1,9 +1,10 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import AudioContextService from "../contexts/audioContextService";
 import { IAudioPlayerState } from "../types/IAudioPlayerState";
 import { ISong } from "../types/ISong";
 import { AppDispatch, RootState } from "../store";
 import { IAudioPayload } from "../types/IAudioPayload";
+import { IPlaylist } from "../types/IPlaylist";
 
 let currentAudioSource: AudioBufferSourceNode | null = null;
 let currentAudioBuffer: AudioBuffer | null = null;
@@ -128,7 +129,7 @@ export const playNextSong =
   () => (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState() as { audioPlayer: IAudioPlayerState };
 
-    if (state.audioPlayer.queue && state.audioPlayer.queue.length) {
+    if (state.audioPlayer.queue.length && state.audioPlayer.queue.length>0) {
       try {
         dispatch(playAudio(state.audioPlayer.queue[0]));
         dispatch(removeFirstFromQueue());
@@ -225,6 +226,7 @@ export const seekAudio = createAsyncThunk<
 const audioPlayerSlice = createSlice({
   name: "audioPlayer",
   initialState: {
+    playlists: [],
     isPlaying: false,
     volume: 70,
     isMuted: false,
@@ -244,6 +246,9 @@ const audioPlayerSlice = createSlice({
         AudioContextService.setVolume(action.payload);
       }
     },
+    setPlaylists: (state, action: PayloadAction<IPlaylist[]>) => {
+      state.playlists = action.payload;
+    },
     toggleMute: (state) => {
       state.isMuted = !state.isMuted;
       if (currentAudioSource) {
@@ -256,6 +261,12 @@ const audioPlayerSlice = createSlice({
     addToQueue: (state, action) => {
       state.queue.push(action.payload);
     },
+    setQueue: (state, action) => {
+      state.queue = action.payload;
+    },
+    clearQueue: (state) => {
+      state.queue = [];
+    },
     playNext: (state, action) => {
       state.queue.unshift(action.payload);
     },
@@ -263,12 +274,8 @@ const audioPlayerSlice = createSlice({
       const [, ...rest] = state.queue;
       state.queue = rest;
     },
-
     addToHistory: (state, action) => {
       state.history.unshift(action.payload);
-    },
-    clearQueue: (state) => {
-      state.queue = [];
     },
     removeFromHistory: (state) => {
       const [, ...rest] = state.history;
@@ -328,11 +335,14 @@ const audioPlayerSlice = createSlice({
 
 export const {
   resetAudioPlayer,
+  setPlaylists,
   setPausedTime,
   setIsPlaying,
   setCurrentTime,
   setCurrentlyPlaying,
   addToQueue,
+  clearQueue,
+  setQueue,
   playNext,
   removeFirstFromQueue,
   addToHistory,
@@ -353,6 +363,8 @@ export const selectPreviousSong = (state: RootState) =>
 export const selectQueue = (state: RootState) => state.audioPlayer.queue;
 export const selectCurrentTime = (state: RootState) =>
   state.audioPlayer.currentTime;
+export const selectPlaylists = (state: RootState) =>
+  state.audioPlayer.playlists;
 export const selectDuration = (state: RootState) => state.audioPlayer.duration;
 export const selectVolume = (state: RootState) => state.audioPlayer.volume;
 export const selectIsMuted = (state: RootState) => state.audioPlayer.isMuted;

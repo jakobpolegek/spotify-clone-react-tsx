@@ -26,9 +26,9 @@ export const useAudioControls = () => {
 
     const handlePause = () => {
         try {
-        dispatch(pauseAudio());
+            dispatch(pauseAudio());
         } catch (error: any) {
-        throw new Error("Error pausing song:" + error);
+            throw new Error("Error pausing song:" + error);
         }
     };
 

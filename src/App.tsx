@@ -20,6 +20,7 @@ import LikedSongsPage from "./page/LikedSongsPage";
 import { getAuthor } from "./utils/api/getAuthor";
 import { setCurrentSession } from "./utils/supabase";
 import { useEffect } from "react";
+import PlaylistPage from "./page/PlaylistPage";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -101,6 +102,20 @@ const router = createBrowserRouter(
           </>
         }
         loader={getAuthor}
+        errorElement={<ErrorPage />}
+      />
+      <Route
+        path="/playlist/:playlistId"
+        element={
+          <>
+            <SignedIn>
+              <PlaylistPage />
+            </SignedIn>
+            <SignedOut>
+              <WelcomePage />
+            </SignedOut>
+          </>
+        }
         errorElement={<ErrorPage />}
       />
       <Route

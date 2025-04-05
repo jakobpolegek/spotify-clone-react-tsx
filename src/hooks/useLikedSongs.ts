@@ -1,4 +1,3 @@
-// useLikedSongs.ts
 import { useEffect, useState } from "react";
 import { ISong } from "../types/ISong";
 import { getLikedSongs } from "../utils/api/getLikedSongs";

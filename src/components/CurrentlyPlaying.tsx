@@ -11,7 +11,7 @@ const CurrentlyPlaying = () => {
       {currentlyPlaying ? (
         <>
           {currentlyPlaying.cover ? (
-            <img className="m-1 ml-5 w-16 h-16" src={currentlyPlaying.cover} />
+            <img className="m-1 ml-4 w-16 h-16" src={currentlyPlaying.cover} />
           ) : (
             <></>
           )}
@@ -24,7 +24,7 @@ const CurrentlyPlaying = () => {
               </h3>
             </Link>
             <h3 id="artist" className="flex text-gray-300">
-              <Authors authors={currentlyPlaying.authors} />
+              <Authors authors={currentlyPlaying.authors} isHeader={false}/>
             </h3>
           </div>
         </>
