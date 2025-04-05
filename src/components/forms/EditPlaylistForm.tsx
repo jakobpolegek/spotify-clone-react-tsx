@@ -13,6 +13,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react"
 import { UploadCloudIcon } from "lucide-react"
 import { uploadAlbumCover } from "../../utils/api/uploadAlbumCover"
 import { updatePlaylistInfo } from "../../utils/api/updatePlaylistInfo"
+import { removeCurrentPlaylistCover } from "../../utils/api/removeCurrentPlaylistCover"
 
 const EditPlaylistDialog = ({
   id,
@@ -61,7 +62,11 @@ const EditPlaylistDialog = ({
     try {
       if (id && playlistName && playlistName.trim()) {
         setUploading(true);
-        const publicUrl = selectedFile ? await uploadAlbumCover(userId, selectedFile, id) : null;
+
+        if (selectedFile) {
+          await removeCurrentPlaylistCover(id, userId);
+        }
+        const publicUrl = previewUrl && selectedFile ? await uploadAlbumCover(userId, selectedFile, id) : null;
         await updatePlaylistInfo(id,{ name: playlistName, cover_image_url: publicUrl });
       }
 
