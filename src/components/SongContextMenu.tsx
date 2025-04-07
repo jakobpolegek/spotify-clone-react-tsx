@@ -26,6 +26,7 @@ import { addLikedSong } from '../utils/api/addLikedSong';
 import { removeLikedSong } from '../utils/api/removeLikedSong';
 import { removeSongFromPlaylist } from '../utils/api/removeSongFromPlaylist';
 import { getPlaylists } from '../utils/api/getPlaylists';
+import { useToast } from "../hooks/useToast"
 
 export const SongContextMenu = ({
   page,
@@ -38,6 +39,7 @@ export const SongContextMenu = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSong, setSelectedSong] = useState<ISong | null>(null);
   const userPlaylists =  useSelector(selectPlaylists);
+  const { toast } = useToast()
 
   const fetchPlaylists = async () => {
     try {
@@ -171,7 +173,12 @@ export const SongContextMenu = ({
         }
         <ContextMenuSeparator />
         <ContextMenuItem
-          onClick={() => dispatch(addToQueue(song))}
+          onClick={() => {
+            dispatch(addToQueue(song))
+            toast({
+              title: "Song successfully added to queue."
+            })}
+          }
         >
           <PlusIcon className="mr-2" /> Add to queue
         </ContextMenuItem>
