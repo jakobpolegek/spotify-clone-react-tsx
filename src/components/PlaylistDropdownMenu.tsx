@@ -28,6 +28,7 @@ import { ISong } from '../types/ISong';
 import { getPlaylists } from '../utils/api/getPlaylists';
 import { removePlaylist } from '../utils/api/removePlaylist';
 import { useNavigate } from 'react-router';
+import { useToast } from '../hooks/useToast';
 
 export const PlaylistDropDownMenu = ({
   songs,
@@ -39,6 +40,7 @@ export const PlaylistDropDownMenu = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { toast } = useToast()
 
   const fetchPlaylists = async () => {
     try {
@@ -75,7 +77,10 @@ export const PlaylistDropDownMenu = ({
     <>
         <DropdownMenuContent className="bg-slate-900 text-white border-0">
             <DropdownMenuGroup>
-                <DropdownMenuItem onClick={handleAddToQueue}>
+                <DropdownMenuItem onClick={()=>{handleAddToQueue; toast({
+                    title: "Song successfully added to queue.",
+                    duration: 3000
+                })}}>
                     <ListEndIcon /> Add to queue
                 </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -109,7 +114,13 @@ export const PlaylistDropDownMenu = ({
                     <AlertDialogFooter>
                         <AlertDialogCancel className='bg-slate-600 text-white'>Cancel</AlertDialogCancel>
                         <AlertDialogAction onClick={async()=>{
-                            await handleRemovePlaylist()
+                            await handleRemovePlaylist().then(()=>{
+                                toast({
+                                    title: "Playlist deleted successfully.",
+                                    duration: 3000
+                                })
+                            }
+                            )
                         }}>Continue</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

@@ -9,9 +9,15 @@ export const updatePlaylistInfo = async (
 ) => {
     try {
         const supabase = getSupabaseClient();
+        
+        const updatesToSend: { name?: string; cover_image_url?: string | null } = { name: updates.name };
+        if (updates.cover_image_url !== null && updates.cover_image_url !== undefined) {
+            updatesToSend.cover_image_url = updates.cover_image_url;
+        }
+
         const { error } = await supabase
             .from('playlists')
-            .update(updates)
+            .update(updatesToSend)
             .eq('id', playlistId);
 
         if (error) throw error;

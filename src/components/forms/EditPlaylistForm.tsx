@@ -14,6 +14,7 @@ import { UploadCloudIcon } from "lucide-react"
 import { uploadAlbumCover } from "../../utils/api/uploadAlbumCover"
 import { updatePlaylistInfo } from "../../utils/api/updatePlaylistInfo"
 import { removeCurrentPlaylistCover } from "../../utils/api/removeCurrentPlaylistCover"
+import { useToast } from "../../hooks/useToast"
 
 const EditPlaylistDialog = ({
   id,
@@ -28,6 +29,7 @@ const EditPlaylistDialog = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast()
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -67,7 +69,13 @@ const EditPlaylistDialog = ({
           await removeCurrentPlaylistCover(id, userId);
         }
         const publicUrl = previewUrl && selectedFile ? await uploadAlbumCover(userId, selectedFile, id) : null;
-        await updatePlaylistInfo(id,{ name: playlistName, cover_image_url: publicUrl });
+        await updatePlaylistInfo(id,{ name: playlistName, cover_image_url: publicUrl }).then(() => {  
+          toast({
+            title: "Playlist updated successfully.",
+            duration: 3000
+          });
+        });
+      
       }
 
       if (onOpenChange) {

@@ -121,14 +121,25 @@ export const SongContextMenu = ({
                 title: song.title,
                 authors: song.authors || [],
               };
-              removeSong(newSong);
+              removeSong(newSong).then(() => {
+                toast({
+                  title: "Song successfully removed from liked songs.",
+                  duration: 3000
+                })
+              });
             }}
           >
             <HeartCrackIcon /> &nbsp; Remove liked songs
           </ContextMenuItem>
           :
           <ContextMenuItem
-            onClick={() => userId && addSongToLikedSongs(song)}
+            onClick={() => userId && addSongToLikedSongs(song).then(() => {
+              toast({
+                title: "Song successfully added to liked songs.",
+                duration: 3000
+              })
+            }
+            )}
           >
             <HeartIcon className="mr-2" /> Add to liked songs
           </ContextMenuItem>                    
@@ -155,7 +166,13 @@ export const SongContextMenu = ({
                       onSelect={() => handleAddToPlaylist(
                         song=song,
                         userId=userId,
-                        playlistId=playlist.id)}
+                        playlistId=playlist.id).then(() => {
+                          toast({
+                            title: "Song successfully added to playlist.",
+                            duration: 3000
+                          })
+                        }
+                      )}
                     >
                       <PlusCircleIcon className="mr-2" /> {playlist.name}
                     </ContextMenuItem>
@@ -166,7 +183,13 @@ export const SongContextMenu = ({
         </ContextMenuSub>
         {page === 2  && playlistId && 
           <ContextMenuItem
-            onSelect={() => handleRemoveFromPlaylist()}
+            onSelect={() => handleRemoveFromPlaylist().then(() => {
+              toast({
+                title: "Song successfully removed from playlist.",
+                duration: 3000
+              })
+            }
+            )}
           >
             <MinusCircleIcon className="mr-2" /> Remove from this playlist
           </ContextMenuItem>
@@ -176,14 +199,18 @@ export const SongContextMenu = ({
           onClick={() => {
             dispatch(addToQueue(song))
             toast({
-              title: "Song successfully added to queue."
+              title: "Song successfully added to queue.",
+              duration: 3000
             })}
           }
         >
           <PlusIcon className="mr-2" /> Add to queue
         </ContextMenuItem>
         <ContextMenuItem
-          onClick={() => dispatch(playNext(song))}
+          onClick={() => {dispatch(playNext(song));toast({
+            title: "Song will play next.",
+            duration: 3000
+          })}} 
         >
           <CircleArrowRightIcon className="mr-2" /> Play next
         </ContextMenuItem>
