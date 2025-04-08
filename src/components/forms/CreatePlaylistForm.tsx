@@ -11,6 +11,7 @@ import {
   import { Label } from "../ui/label"
   import { ICreatePlaylistDialogProps } from "../../types/ICreatePlaylistDialogProps"
 import { useEffect, useState } from "react"
+import { useToast } from "../../hooks/useToast"
   const CreatePlaylistDialog = ({
     open,
     onOpenChange,
@@ -19,7 +20,8 @@ import { useEffect, useState } from "react"
     onCreatePlaylist,
   }: ICreatePlaylistDialogProps) => {
     const [playlistName, setPlaylistName] = useState("")
-  
+    const { toast } = useToast()
+
     useEffect(() => {
       if (!open) {
         setPlaylistName("")
@@ -35,6 +37,10 @@ import { useEffect, useState } from "react"
           undefined,
           playlistName.trim()
         )
+        toast({
+          title: `Playlist ${playlistName} created successfully.`,
+          duration: 3000
+        });
       }
 
       if (onOpenChange) {
