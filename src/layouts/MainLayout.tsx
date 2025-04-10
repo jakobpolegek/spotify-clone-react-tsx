@@ -14,12 +14,12 @@ const MainLayout = () => {
         <WelcomePage />
       </SignedOut>
       <SignedIn>
-        <Toaster/>
-        <div className="grid grid-cols-8 grid-rows-12 gap-2 m-auto bg-slate-900 h-screen">
-          <Header />
-          <NavigationSidebar />
+        <Toaster />
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 grid-rows-[auto_1fr_auto] md:grid-rows-12 gap-1 md:gap-2 bg-slate-900 h-screen">
+          <Header/>
+          <NavigationSidebar/>
           <Outlet />
-          <Player />
+          <Player/>
         </div>
       </SignedIn>
     </>

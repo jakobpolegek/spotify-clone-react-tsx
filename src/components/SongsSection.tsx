@@ -56,7 +56,7 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
   }
 
   return (
-    <div className="col-span-7 row-span-11 h-full flex flex-col overflow-hidden rounded border-0 border-slate-900">
+    <div className="col-span-7 lg:col-span-9 row-span-11 h-full flex flex-col ml-4 mr-1 md:mr-4 mt-2 lg:mt-0 lg:ml-0 overflow-hidden rounded border-0 border-slate-900">
       <div className="flex flex-col flex-1 overflow-y-auto">
         <div className="flex bg-slate-800 text-white border-2 rounded border-slate-800">
           <div className="flex items-center mb-6">

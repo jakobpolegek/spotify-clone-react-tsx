@@ -8,13 +8,11 @@ const HomePage = () => {
   const mergedAlbums: IAlbum[] = processAlbums(albums);
 
   return (
-    <div className="mr-5 col-span-9 row-span-11 bottom-0 bg-slate-800 rounded">
-      <div className="flex items-center justify-center max-h-screen grow">
-        <div id="albums" className="m-2 flex flex-wrap space-x-12">
-          {mergedAlbums.map((album) => (
-            <Album key={album.id} album={album} />
-          ))}
-        </div>
+    <div className="col-span-10 lg:col-span-9 lg:row-span-11 bg-slate-800 rounded ml-4 mr-4 mt-2 lg:mt-0 lg:ml-0">
+      <div id="albums" className="m-6 flex flex-wrap gap-8 lg:gap-12">
+        {mergedAlbums.map((album) => (
+          <Album key={album.id} album={album} />
+        ))}
       </div>
     </div>
   );

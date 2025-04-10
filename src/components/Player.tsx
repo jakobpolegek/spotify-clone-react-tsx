@@ -105,14 +105,14 @@ const Player = () => {
   };
 
   return (
-    <div className="col-span-10 mt-auto bg-slate-900 mb-1">
-      <div className="grid grid-cols-3">
+    <div className="col-span-10 mt-2 bg-slate-900 mb-1">
+      <div className="grid grid-cols-3 ml-2 md:ml-0">
         <CurrentlyPlaying />
         <div
           id="player-controls"
-          className="flex flex-col items-center justify-center mb-3"
+          className="flex flex-col items-center justify-center mb-3 ml-12 md:ml-0"
         >
-          <div className="flex mt-2 gap-2">
+          <div className="flex mt-2 gap-2 mr-24 mb-2 md:mr-0 md:mb-0">
             <Button variant="link" onClick={handlePlayPreviousSong}>
               <SkipBack size={42} />
             </Button>
@@ -130,10 +130,10 @@ const Player = () => {
             </Button>
           </div>
 
-          <div id="progress" className="flex items-center gap-3">
+          <div id="progress" className="flex items-center gap-3 mr-2 md:mr-0">
             <span className="text-white">{formatTime(currentTime)}</span>
             <Slider
-              className="w-96"
+              className="w-32 sd:w-32 md:w-96"
               value={[sliderValue]}
               onValueChange={handleSliderChange}
               max={100}
@@ -147,7 +147,7 @@ const Player = () => {
           <Button
             variant="link"
             onClick={handleVolumeClick}
-            className="text-primary p-0"
+            className="text-primary p-0 mb-8 md:mb-0"
           >
             {getVolumeIcon()}
           </Button>
@@ -156,7 +156,7 @@ const Player = () => {
             onValueChange={handleVolumeChange}
             max={100}
             step={1}
-            className="w-24"
+            className="mb-8 w-20 md:w-24 md:mb-0  mr-2 md:mr-0"
           />
         </div>
       </div>
