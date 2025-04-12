@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Button } from "./ui/button";
 import {
-  SkipBack,
-  Play,
-  Pause,
-  SkipForward,
+  SkipBackIcon,
+  PlayIcon,
+  PauseIcon,
+  SkipForwardIcon,
   Volume,
   Volume1,
   Volume2,
@@ -105,28 +105,28 @@ const Player = () => {
   };
 
   return (
-    <div className="col-span-10 mt-2 bg-slate-900 mb-1">
+    <div className="fixed bottom-0 left-0 right-0 bg-slate-900 p-4 z-50">
       <div className="grid grid-cols-3 ml-2 md:ml-0">
         <CurrentlyPlaying />
         <div
           id="player-controls"
-          className="flex flex-col items-center justify-center mb-3 ml-12 md:ml-0"
+          className="flex flex-col items-center justify-center mb-3 sm:ml-14 ml-14 md:ml-12"
         >
           <div className="flex mt-2 gap-2 mr-24 mb-2 md:mr-0 md:mb-0">
             <Button variant="link" onClick={handlePlayPreviousSong}>
-              <SkipBack size={42} />
+              <SkipBackIcon size={42} />
             </Button>
             {isPlaying ? (
               <Button variant="link" onClick={handlePause}>
-                <Pause size={42} />
+                <PauseIcon size={42} />
               </Button>
             ) : (
               <Button variant="link" onClick={handlePlay}>
-                <Play size={42} />
+                <PlayIcon size={42} />
               </Button>
             )}
             <Button variant="link" onClick={handlePlayNextSong}>
-              <SkipForward size={42} />
+              <SkipForwardIcon size={42} />
             </Button>
           </div>
 
@@ -143,7 +143,7 @@ const Player = () => {
           </div>
         </div>
 
-        <div id="volume" className="flex items-center justify-end gap-2 pr-5">
+        <div id="volume" className="flex items-center justify-end gap-2">
           <Button
             variant="link"
             onClick={handleVolumeClick}
@@ -156,7 +156,7 @@ const Player = () => {
             onValueChange={handleVolumeChange}
             max={100}
             step={1}
-            className="mb-8 w-20 md:w-24 md:mb-0  mr-2 md:mr-0"
+            className="mb-8 w-10 md:w-24 md:mb-0  mr-2 md:mr-0"
           />
         </div>
       </div>
