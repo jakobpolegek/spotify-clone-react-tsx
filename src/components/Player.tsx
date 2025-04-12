@@ -110,7 +110,7 @@ const Player = () => {
         <CurrentlyPlaying />
         <div
           id="player-controls"
-          className="flex flex-col items-center justify-center mb-3 sm:ml-14 ml-14 md:ml-12"
+          className="flex flex-col items-center justify-center mt-2 sm:ml-14 ml-14 md:ml-12"
         >
           <div className="flex mt-2 gap-2 mr-24 mb-2 md:mr-0 md:mb-0">
             <Button variant="link" onClick={handlePlayPreviousSong}>
@@ -147,7 +147,7 @@ const Player = () => {
           <Button
             variant="link"
             onClick={handleVolumeClick}
-            className="text-primary p-0 mb-8 md:mb-0"
+            className="text-primary p-0 mb-4 md:mb-0"
           >
             {getVolumeIcon()}
           </Button>
@@ -156,7 +156,7 @@ const Player = () => {
             onValueChange={handleVolumeChange}
             max={100}
             step={1}
-            className="mb-8 w-10 md:w-24 md:mb-0  mr-2 md:mr-0"
+            className="mb-4 w-10 md:w-24 md:mb-0  mr-2 md:mr-0"
           />
         </div>
       </div>

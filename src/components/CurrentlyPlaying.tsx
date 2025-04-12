@@ -12,7 +12,7 @@ const CurrentlyPlaying = () => {
         <>
           {currentlyPlaying.cover ? (
             <Link to={`/artist/${currentlyPlaying.authors[0].id}/albums/${currentlyPlaying.albumId}`}>
-              <img className="w-12 h-16 mb-2 md:mb-0 md:m-1 md:ml-4 md:w-16 md:h-16" src={currentlyPlaying.cover} />
+              <img className="w-12 h-16 mt-2 md:mt-0 md:m-1 md:ml-4 md:w-16 md:h-16" src={currentlyPlaying.cover} />
             </Link>
           ) : (
             <></>
@@ -25,7 +25,7 @@ const CurrentlyPlaying = () => {
                 .replace(/\.mp3$/, "")}
               </h3>
             </Link>
-            <h3 id="artist" className="flex text-gray-300">
+            <h3 id="artist" className="flex text-gray-300 mb-4 lg:mb-0">
               <Authors authors={currentlyPlaying.authors} isHeader={false}/>
             </h3>
             </div>
