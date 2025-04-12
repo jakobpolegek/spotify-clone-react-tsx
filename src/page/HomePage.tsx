@@ -8,8 +8,8 @@ const HomePage = () => {
   const mergedAlbums: IAlbum[] = processAlbums(albums);
 
   return (
-    <div className="col-span-10 lg:col-span-9 lg:row-span-11 bg-slate-800 rounded ml-4 mr-4 mt-2 lg:mt-0 lg:ml-0">
-      <div id="albums" className="m-6 flex flex-wrap gap-8 lg:gap-12">
+    <div className="col-span-7 lg:col-span-9 row-span-11 h-full flex flex-col ml-4 mr-1 md:mr-4 mt-2 lg:mt-0 lg:ml-0 overflow-hidden rounded border-0 bg-slate-800">
+      <div id="albums" className="m-8 md:m-6 flex flex-wrap gap-8 lg:gap-12">
         {mergedAlbums.map((album) => (
           <Album key={album.id} album={album} />
         ))}

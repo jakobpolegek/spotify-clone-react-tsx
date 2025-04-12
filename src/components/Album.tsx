@@ -4,12 +4,18 @@ import { Authors } from "./Authors";
 
 export const Album = ({ album }: { album: IAlbum }) => {
   return (
-    <div id="album" className="text-white w-20 h-20 lg:w-48 lg:h-48">
+    <div id="album" className="text-white w-24 lg:w-48 flex flex-col">
       <Link key={album.id} to={`/artist/${album.authors[0]?.id}/albums/${album.id}`}>
-        <img src={album.cover} className="w-max h-max mb-1" alt={album.title} />
-        <h1 className="lg:text-2xl font-bold">{album.title}</h1>
+        <img 
+          src={album.cover} 
+          className="w-full aspect-square object-cover mb-2" 
+          alt={album.title} 
+        />
+        <h1 className="text-sm lg:text-lg font-bold truncate">{album.title}</h1>
       </Link>
-      <Authors authors={album.authors} isHeader={false}/>
+      <div className="mt-1">
+        <Authors authors={album.authors} isHeader={false}/>
+      </div>
     </div>
   );
 };

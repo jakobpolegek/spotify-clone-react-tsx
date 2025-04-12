@@ -70,7 +70,7 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
               <h1 className={`text-xl md:text-8xl font-extrabold text-white`}>
                   {page===1?'Liked songs':(page===2 ? collectionName: album?.title)}
               </h1>
-              <h3 className="mt-4 text-gray-400 flex flex-row">{page===0 && album ? <Authors authors={album.authors} isHeader={true}/>:
+              <h3 className="mt-1 md:mt-4 text-gray-400 flex flex-row">{page===0 && album ? <Authors authors={album.authors} isHeader={true}/>:
               <>
                 {user.firstName},
               </>} 
@@ -81,7 +81,7 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
         </div>
         
         <div id="songsSection" className="flex flex-col flex-grow flex-1 mt-2 pb-8 border-2 rounded border-slate-800 bg-slate-800">
-          <div id="playlistControls" className="flex flex-row ml-10">
+          <div id="playlistControls" className="flex flex-row justify-center md:justify-normal md:ml-10">
             <PlayCircleIcon className="mt-6 text-primary h-12 w-12" onClick={handlePlaySongs} />
             {page === 2 &&
               <DropdownMenu>
