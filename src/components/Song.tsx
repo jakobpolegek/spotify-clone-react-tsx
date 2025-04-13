@@ -22,7 +22,7 @@ export const Song = ({ song, isPlaying, page = 0 }: { song:ISong, isPlaying:bool
   return (
     <div
       id="song"
-      className={`flex flex-row text-white ml-6 ${page === 0 ? 'mt-6' : 'mt-1'} items-center`}
+      className={`flex flex-row text-white ml:0 md:ml-6 ${page === 0 ? 'mt-6' : 'mt-1'} items-center`}
     >
       {isPlaying && song.title === currentlyPlaying?.title ? (
         <Button variant="link" onClick={handlePause}>

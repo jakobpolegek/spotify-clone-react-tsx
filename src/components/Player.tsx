@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Button } from "./ui/button";
 import {
-  SkipBack,
-  Play,
-  Pause,
-  SkipForward,
+  SkipBackIcon,
+  PlayIcon,
+  PauseIcon,
+  SkipForwardIcon,
   Volume,
   Volume1,
   Volume2,
@@ -105,35 +105,35 @@ const Player = () => {
   };
 
   return (
-    <div className="col-span-10 mt-auto bg-slate-900 mb-1">
-      <div className="grid grid-cols-3">
+    <div className="fixed bottom-0 left-0 right-0 bg-slate-900 p-4 z-50">
+      <div className="grid grid-cols-3 ml-2 md:ml-0">
         <CurrentlyPlaying />
         <div
           id="player-controls"
-          className="flex flex-col items-center justify-center mb-3"
+          className="flex flex-col items-center justify-center mt-2 sm:ml-14 ml-14 md:ml-12"
         >
-          <div className="flex mt-2 gap-2">
+          <div className="flex mt-2 gap-2 mr-24 mb-2 md:mr-0 md:mb-0">
             <Button variant="link" onClick={handlePlayPreviousSong}>
-              <SkipBack size={42} />
+              <SkipBackIcon size={42} />
             </Button>
             {isPlaying ? (
               <Button variant="link" onClick={handlePause}>
-                <Pause size={42} />
+                <PauseIcon size={42} />
               </Button>
             ) : (
               <Button variant="link" onClick={handlePlay}>
-                <Play size={42} />
+                <PlayIcon size={42} />
               </Button>
             )}
             <Button variant="link" onClick={handlePlayNextSong}>
-              <SkipForward size={42} />
+              <SkipForwardIcon size={42} />
             </Button>
           </div>
 
-          <div id="progress" className="flex items-center gap-3">
+          <div id="progress" className="flex items-center gap-3 mr-2 md:mr-0">
             <span className="text-white">{formatTime(currentTime)}</span>
             <Slider
-              className="w-96"
+              className="w-32 sd:w-32 md:w-96"
               value={[sliderValue]}
               onValueChange={handleSliderChange}
               max={100}
@@ -143,11 +143,11 @@ const Player = () => {
           </div>
         </div>
 
-        <div id="volume" className="flex items-center justify-end gap-2 pr-5">
+        <div id="volume" className="flex items-center justify-end gap-2">
           <Button
             variant="link"
             onClick={handleVolumeClick}
-            className="text-primary p-0"
+            className="text-primary p-0 mb-4 md:mb-0"
           >
             {getVolumeIcon()}
           </Button>
@@ -156,7 +156,7 @@ const Player = () => {
             onValueChange={handleVolumeChange}
             max={100}
             step={1}
-            className="w-24"
+            className="mb-4 w-10 md:w-24 md:mb-0  mr-2 md:mr-0"
           />
         </div>
       </div>
