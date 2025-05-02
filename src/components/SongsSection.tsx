@@ -1,15 +1,22 @@
 import { Song } from "../components/Song";
 import { useDispatch, useSelector } from "react-redux";
-import { selectIsPlaying, clearQueue, setQueue, playNextSong } from "../slices/audioPlayerSlice";
 import {
-  ContextMenu,
-  ContextMenuTrigger,
-} from "../components/ui/context-menu";
+  selectIsPlaying,
+  clearQueue,
+  setQueue,
+  playNextSong,
+} from "../slices/audioPlayerSlice";
+import { ContextMenu, ContextMenuTrigger } from "../components/ui/context-menu";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu"
-import { PlayCircleIcon, EllipsisIcon, HeartIcon, MusicIcon } from "lucide-react";
+} from "../components/ui/dropdown-menu";
+import {
+  PlayCircleIcon,
+  EllipsisIcon,
+  HeartIcon,
+  MusicIcon,
+} from "lucide-react";
 import { SongContextMenu } from "../components/SongContextMenu";
 import { PlaylistDropDownMenu } from "../components/PlaylistDropdownMenu";
 import { AppDispatch } from "../store";
@@ -20,70 +27,104 @@ import { Authors } from "./Authors";
 import { useEffect, useState } from "react";
 import { getPlaylistInfo } from "../utils/api/getPlaylistsInfo";
 
-const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange = null, album=null }:
-  {
-    user: UserResource,
-    songs: ISong[],
-    page: number,
-    playlistId: string | null,
-    onSongsChange: any,
-    album:IAlbum|null
-  }) => {
+const SongsSection = ({
+  user,
+  songs,
+  page = 0,
+  playlistId = null,
+  onSongsChange = null,
+  album = null,
+}: {
+  user: UserResource;
+  songs: ISong[];
+  page: number;
+  playlistId: string | null;
+  onSongsChange: any;
+  album: IAlbum | null;
+}) => {
   const [coverImage, setCoverImage] = useState(null);
   const [collectionName, setCollectionName] = useState(songs[0]?.name);
   const dispatch: AppDispatch = useDispatch();
   const isPlaying = useSelector(selectIsPlaying);
 
-  const fetchPlaylistInfo = async () =>{
-    if (playlistId){
+  const fetchPlaylistInfo = async () => {
+    if (playlistId) {
       const playListInfo = await getPlaylistInfo(playlistId);
-      playListInfo.cover_image_url && setCoverImage(playListInfo.cover_image_url);
+      playListInfo.cover_image_url &&
+        setCoverImage(playListInfo.cover_image_url);
       setCollectionName(playListInfo.name);
     }
-  }
+  };
 
-  useEffect(()=>{
-    if(page===2&&playlistId)
-    {
+  useEffect(() => {
+    if (page === 2 && playlistId) {
       fetchPlaylistInfo();
     }
-  },[playlistId])
+  }, [playlistId]);
 
   const handlePlaySongs = async () => {
     dispatch(clearQueue());
     dispatch(setQueue(songs));
     dispatch(playNextSong());
-  }
+  };
 
   return (
-    <div className="col-span-7 lg:col-span-9 row-span-11 h-full flex flex-col ml-4 mr-1 md:mr-4 mt-1 lg:mt-0 lg:ml-0 overflow-hidden rounded border-0 border-slate-900">
-      <div className="flex flex-col flex-1 overflow-y-auto">
-        <div className="flex justify-center md:justify-normal bg-slate-800 text-white border-2 rounded border-slate-800">
-          <div id="songsHeader" className="flex flex-col md:flex-row items-center mb-2 md:mb-6">
-            {page===1?
-            <HeartIcon className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4 text-primary"/>
-            :(page===2 ? (coverImage ? <img src={coverImage} className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4" /> : <MusicIcon className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4 text-primary"/>)
-            :album&&<img src={album.cover} className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4" />
+    <div className="col-span-7 lg:col-span-9 row-span-11 h-full flex flex-col ml-4 mr-1 md:mr-4 mt-1 lg:mt-0 lg:ml-0 rounded border-0 border-slate-900">
+      <div className="flex flex-col h-full">
+        <div className="flex-shrink-0 flex justify-center md:justify-normal bg-slate-800 text-white border-2 rounded border-slate-800">
+          <div
+            id="songsHeader"
+            className="flex flex-col md:flex-row items-center mb-2 md:mb-6"
+          >
+            {page === 1 ? (
+              <HeartIcon className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4 text-primary" />
+            ) : page === 2 ? (
+              coverImage ? (
+                <img
+                  src={coverImage}
+                  className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
+                />
+              ) : (
+                <MusicIcon className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4 text-primary" />
+              )
+            ) : (
+              album && (
+                <img
+                  src={album.cover}
+                  className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
+                />
+              )
             )}
             <div className="flex flex-col md:ml-6 md:mt-10 items-center md:items-start">
-              {page===0&&<h4 className="">Album</h4>}
+              {page === 0 && <h4 className="">Album</h4>}
               <h1 className={`text-xl md:text-8xl font-extrabold text-white`}>
-                  {page===1?'Liked songs':(page===2 ? collectionName: album?.title)}
+                {page === 1
+                  ? "Liked songs"
+                  : page === 2
+                  ? collectionName
+                  : album?.title}
               </h1>
-              <h3 className="mt-1 md:mt-4 text-gray-400 flex flex-row">{page===0 && album ? <Authors authors={album.authors} isHeader={true}/>:
-              <>
-                {user.firstName},
-              </>} 
+              <h3 className="mt-1 md:mt-4 text-gray-400 flex flex-row">
+                {page === 0 && album ? (
+                  <Authors authors={album.authors} isHeader={true} />
+                ) : (
+                  <>{user.firstName},</>
+                )}
                 &ensp;{songs.length} songs
               </h3>
             </div>
           </div>
         </div>
-        
-        <div id="songsSection" className="flex flex-col flex-grow flex-1 mt-2 pb-8 border-2 rounded border-slate-800 bg-slate-800">
-          <div id="playlistControls" className="flex flex-row justify-center md:justify-normal md:ml-10">
-            <PlayCircleIcon className="mt-6 text-primary h-12 w-12" onClick={handlePlaySongs} />
-            {page === 2 &&
+        <div className="flex flex-col flex-1 min-h-0 mt-2 border-2 rounded border-slate-800 bg-slate-800">
+          <div
+            id="playlistControls"
+            className="flex-shrink-0 flex flex-row justify-center md:justify-normal md:ml-10"
+          >
+            <PlayCircleIcon
+              className="mt-6 text-primary h-12 w-12"
+              onClick={handlePlaySongs}
+            />
+            {page === 2 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <EllipsisIcon
@@ -100,21 +141,27 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
                   playlistId={playlistId}
                   onSongsChange={onSongsChange}
                 />
-              </DropdownMenu>}
+              </DropdownMenu>
+            )}
           </div>
-          <div className="flex flex-col items-left justify-left grow mt-2">
-            <div id="songs" className="m-2 flex flex-col">
+
+          <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
+            <div id="songs" className="m-2 flex flex-col pt-4 pb-12">
               {songs.map((song: ISong) => (
                 <ContextMenu key={song.source}>
                   <ContextMenuTrigger>
-                    <Song key={song.source} song={song} page={page} isPlaying={isPlaying} />
+                    <Song
+                      key={song.source}
+                      song={song}
+                      page={page}
+                      isPlaying={isPlaying}
+                    />
                   </ContextMenuTrigger>
-                  
                   <SongContextMenu
                     song={song}
                     userId={user.id}
                     page={page}
-                    playlistId={playlistId||undefined}
+                    playlistId={playlistId || undefined}
                     onSongsChange={onSongsChange}
                   />
                 </ContextMenu>
@@ -125,6 +172,6 @@ const SongsSection = ({ user, songs, page = 0, playlistId = null, onSongsChange 
       </div>
     </div>
   );
-}
+};
 
 export default SongsSection;

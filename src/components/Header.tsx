@@ -16,7 +16,7 @@ const userButtonAppearance = {
 
 const Header = () => {
   return (
-    <div className="col-span-10 bg-slate-800 rounded ml-4 mr-4 mt-2">
+    <div className="col-span-10 bg-slate-800 rounded ml-4 mr-5 md:mr-4 mt-2">
       <div className="flex mt-2 md:mt-6">
         <div
           id="navigation"

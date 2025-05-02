@@ -61,7 +61,8 @@
 /* Custom scrollbar */
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
+  padding-right:8px;
 }
 
 /* Track */
