@@ -20,8 +20,7 @@ const MainLayout = () => {
           <NavigationSidebar />
           <div
             id="outlet"
-            className="col-span-8 md:col-span-10 lg:col-span-9 row-span-1 overflow-hidden"
-            style={{ maxHeight: "calc(100vh - 160px)" }}
+            className="col-span-8 md:col-span-10 lg:col-span-9 row-span-1 overflow-hidden h-[calc(100vh-186px)]"
           >
             <Outlet />
           </div>

@@ -69,7 +69,7 @@ const SongsSection = ({
   };
 
   return (
-    <div className="col-span-7 lg:col-span-9 row-span-11 h-full flex flex-col ml-4 mr-1 md:mr-4 mt-1 lg:mt-0 lg:ml-0 rounded border-0 border-slate-900">
+    <div className="col-span-7 lg:col-span-9 row-span-11 h-full flex flex-col ml-4 mr-1 md:mr-4 lg:ml-0 rounded border-0 border-slate-900">
       <div className="flex flex-col h-full">
         <div className="flex-shrink-0 flex justify-center md:justify-normal bg-slate-800 text-white border-2 rounded border-slate-800">
           <div
@@ -97,7 +97,9 @@ const SongsSection = ({
             )}
             <div className="flex flex-col md:ml-6 md:mt-10 items-center md:items-start">
               {page === 0 && <h4 className="">Album</h4>}
-              <h1 className={`text-xl md:text-8xl font-extrabold text-white`}>
+              <h1
+                className={`text-xl md:text-8xl font-extrabold text-white break-words max-w-[90vw] md:max-w-[60vw]`}
+              >
                 {page === 1
                   ? "Liked songs"
                   : page === 2
