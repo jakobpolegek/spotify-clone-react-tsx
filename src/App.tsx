@@ -21,6 +21,7 @@ import { getAuthor } from "./utils/api/getAuthor";
 import { setCurrentSession } from "./utils/supabase";
 import { useEffect } from "react";
 import PlaylistPage from "./page/PlaylistPage";
+import SearchPage from "./page/SearchPage";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -60,6 +61,20 @@ const router = createBrowserRouter(
         errorElement={<ErrorPage />}
       />
       <Route path="*" element={<ErrorPage />} />
+      <Route
+        path="/search"
+        element={
+          <>
+            <SignedIn>
+              <SearchPage />
+            </SignedIn>
+            <SignedOut>
+              <WelcomePage />
+            </SignedOut>
+          </>
+        }
+        errorElement={<ErrorPage />}
+      />
       <Route
         path="/profile"
         element={
@@ -133,16 +148,15 @@ const router = createBrowserRouter(
         errorElement={<ErrorPage />}
       />
     </Route>
-    
   )
 );
 
 const App = () => {
   const { session } = useSession();
   useEffect(() => {
-    setCurrentSession(session); 
+    setCurrentSession(session);
   }, [session]);
-  
+
   return (
     <Provider store={store}>
       <RouterProvider router={router} />

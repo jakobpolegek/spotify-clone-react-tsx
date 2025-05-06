@@ -11,7 +11,9 @@ import {
   SignInButton,
   UserButton,
 } from "@clerk/clerk-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const userButtonAppearance = {
   elements: {
@@ -20,6 +22,34 @@ const userButtonAppearance = {
 };
 
 const Header = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [prevLocation, setPrevLocation] = useState(location.pathname);
+
+  useEffect(() => {
+    if (!location.pathname.startsWith("/search")) {
+      setPrevLocation(location.pathname);
+    }
+  }, [location.pathname]);
+
+  const handleSearchChange = (e: { target: { value: any } }) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (value.trim().length > 0) {
+      navigate(`/search?q=${encodeURIComponent(value)}`);
+    } else {
+      navigate(prevLocation);
+    }
+  };
+
+  const handleKeyDown = (e: { key: string }) => {
+    if (e.key === "Enter" && searchTerm.trim().length > 0) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+    }
+  };
+
   return (
     <div className="col-span-10 bg-slate-800 rounded ml-4 mr-5 md:mr-4 mt-2">
       <div className="flex mt-2 ">
@@ -40,8 +70,21 @@ const Header = () => {
             {" "}
             <HomeIcon className="text-primary size-5 md:size-8" />
           </Link>
-          <Input className="w-2/6 mx-3 border-primary" />
-          <Link to="/">
+          <Input
+            id="search"
+            className="w-2/6 mx-3 border-primary"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Search..."
+          />
+          <Link
+            to={
+              searchTerm.trim()
+                ? `/search?q=${encodeURIComponent(searchTerm)}`
+                : "/"
+            }
+          >
             {" "}
             <SearchIcon className="text-primary size-5 md:size-8" />
           </Link>
