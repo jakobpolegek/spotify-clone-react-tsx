@@ -18,6 +18,7 @@ import {
   playAudio,
   playNextSong,
   playPreviousSong,
+  selectCurrentlyPlaying,
   selectIsPlaying,
   selectCurrentTime,
   selectDuration,
@@ -32,6 +33,7 @@ import { AppDispatch } from "../store";
 const Player = () => {
   const dispatch: AppDispatch = useDispatch();
   const isPlaying = useSelector(selectIsPlaying);
+  const currentlyPlaying = useSelector(selectCurrentlyPlaying);
   const currentTime = useSelector(selectCurrentTime);
   const duration = useSelector(selectDuration);
   const volume = useSelector(selectVolume);
@@ -106,60 +108,62 @@ const Player = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-slate-900 p-4 z-50">
-      <div className="grid grid-cols-3 ml-2 md:ml-0">
-        <CurrentlyPlaying />
-        <div
-          id="player-controls"
-          className="flex flex-col items-center justify-center mt-2 sm:ml-14 ml-14 md:ml-12"
-        >
-          <div className="flex mt-2 gap-2 mr-24 mb-2 md:mr-0 md:mb-0">
-            <Button variant="link" onClick={handlePlayPreviousSong}>
-              <SkipBackIcon size={42} />
-            </Button>
-            {isPlaying ? (
-              <Button variant="link" onClick={handlePause}>
-                <PauseIcon size={42} />
+      {currentlyPlaying ? (
+        <div className="grid grid-cols-3 ml-2 md:ml-0">
+          <CurrentlyPlaying />
+          <div
+            id="player-controls"
+            className="flex flex-col items-center justify-center mt-2 sm:ml-14 ml-14 md:ml-12"
+          >
+            <div className="flex mt-2 gap-2 mr-24 mb-2 md:mr-0 md:mb-0">
+              <Button variant="link" onClick={handlePlayPreviousSong}>
+                <SkipBackIcon size={42} />
               </Button>
-            ) : (
-              <Button variant="link" onClick={handlePlay}>
-                <PlayIcon size={42} />
+              {isPlaying ? (
+                <Button variant="link" onClick={handlePause}>
+                  <PauseIcon size={42} />
+                </Button>
+              ) : (
+                <Button variant="link" onClick={handlePlay}>
+                  <PlayIcon size={42} />
+                </Button>
+              )}
+              <Button variant="link" onClick={handlePlayNextSong}>
+                <SkipForwardIcon size={42} />
               </Button>
-            )}
-            <Button variant="link" onClick={handlePlayNextSong}>
-              <SkipForwardIcon size={42} />
-            </Button>
+            </div>
+
+            <div id="progress" className="flex items-center gap-3 mr-2 md:mr-0">
+              <span className="text-white">{formatTime(currentTime)}</span>
+              <Slider
+                className="w-32 sd:w-32 md:w-96"
+                value={[sliderValue]}
+                onValueChange={handleSliderChange}
+                max={100}
+                step={1}
+              />
+              <span className="text-white">{formatTime(duration)}</span>
+            </div>
           </div>
 
-          <div id="progress" className="flex items-center gap-3 mr-2 md:mr-0">
-            <span className="text-white">{formatTime(currentTime)}</span>
+          <div id="volume" className="flex items-center justify-end gap-2">
+            <Button
+              variant="link"
+              onClick={handleVolumeClick}
+              className="text-primary p-0 mb-4 md:mb-0"
+            >
+              {getVolumeIcon()}
+            </Button>
             <Slider
-              className="w-32 sd:w-32 md:w-96"
-              value={[sliderValue]}
-              onValueChange={handleSliderChange}
+              value={[isMuted ? 0 : volume]}
+              onValueChange={handleVolumeChange}
               max={100}
               step={1}
+              className="mb-4 w-10 md:w-24 md:mb-0  mr-2 md:mr-0"
             />
-            <span className="text-white">{formatTime(duration)}</span>
           </div>
         </div>
-
-        <div id="volume" className="flex items-center justify-end gap-2">
-          <Button
-            variant="link"
-            onClick={handleVolumeClick}
-            className="text-primary p-0 mb-4 md:mb-0"
-          >
-            {getVolumeIcon()}
-          </Button>
-          <Slider
-            value={[isMuted ? 0 : volume]}
-            onValueChange={handleVolumeChange}
-            max={100}
-            step={1}
-            className="mb-4 w-10 md:w-24 md:mb-0  mr-2 md:mr-0"
-          />
-        </div>
-      </div>
+      ) : null}
     </div>
   );
 };

@@ -58,7 +58,7 @@ const NavigationSidebar = () => {
   };
 
   return (
-    <>
+    <div className="h-[calc(100vh-186px)]">
       <button
         onClick={toggleSidebar}
         className="text-primary fixed top-28 left-0 z-50 lg:hidden bg-slate-800 rounded border-2 border-slate-800 hover:bg-slate-700 transition duration-300"
@@ -96,7 +96,7 @@ const NavigationSidebar = () => {
             >
               <ListIcon color="#0C969C" className="flex-shrink-0 mt-1.5" />
               <div className="ml-4">
-                <h1 className="font-bold text-primary text-2xl break-words">
+                <h1 className="font-bold text-primary text-2xl break-words overflow-hidden max-w-[230px]">
                   {playlist.name}
                 </h1>
               </div>
@@ -104,7 +104,7 @@ const NavigationSidebar = () => {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -11,9 +13,6 @@ import {
   SignInButton,
   UserButton,
 } from "@clerk/clerk-react";
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 
 const userButtonAppearance = {
   elements: {
@@ -25,26 +24,48 @@ const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const [prevLocation, setPrevLocation] = useState(location.pathname);
+  const [navHistory, setNavHistory] = useState<string[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (!location.pathname.startsWith("/search")) {
-      setPrevLocation(location.pathname);
+    const currentPath = location.pathname + location.search;
+    if (navHistory.length === 0) {
+      setNavHistory([currentPath]);
+      setCurrentIndex(0);
     }
-  }, [location.pathname]);
+  }, []);
 
-  const handleSearchChange = (e: { target: { value: any } }) => {
+  useEffect(() => {
+    const currentPath = location.pathname + location.search;
+
+    if (navHistory[currentIndex] !== currentPath) {
+      const newHistory = [
+        ...navHistory.slice(0, currentIndex + 1),
+        currentPath,
+      ];
+      setNavHistory(newHistory);
+      setCurrentIndex(newHistory.length - 1);
+    }
+  }, [location]);
+
+  const canGoBack = currentIndex > 0;
+  const canGoForward = currentIndex < navHistory.length - 1;
+
+  const prevPath = canGoBack ? navHistory[currentIndex - 1] : "#";
+  const nextPath = canGoForward ? navHistory[currentIndex + 1] : "#";
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
 
     if (value.trim().length > 0) {
       navigate(`/search?q=${encodeURIComponent(value)}`);
     } else {
-      navigate(prevLocation);
+      navigate("/");
     }
   };
 
-  const handleKeyDown = (e: { key: string }) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && searchTerm.trim().length > 0) {
       navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
     }
@@ -52,22 +73,41 @@ const Header = () => {
 
   return (
     <div className="col-span-10 bg-slate-800 rounded ml-4 mr-5 md:mr-4 mt-2">
-      <div className="flex mt-2 ">
-        <div
-          id="navigation"
-          className="flex flex-row justify-center gap-4 items-center w-32 mb-1"
-        >
-          <Link to="/">
+      <div className="flex mt-2">
+        <div className="flex flex-row justify-center gap-4 items-center w-32 mb-1">
+          <Link
+            to={prevPath}
+            replace
+            className={!canGoBack ? "opacity-50 cursor-default" : ""}
+            onClick={(e) => {
+              if (!canGoBack) {
+                e.preventDefault();
+              } else {
+                setCurrentIndex((prev) => prev - 1);
+              }
+            }}
+          >
             <ArrowLeftIcon className="text-primary mb-1 md:mb-0 size-5 md:size-8" />
           </Link>
-          <Link to="/">
-            {" "}
+
+          <Link
+            to={nextPath}
+            replace
+            className={!canGoForward ? "opacity-50 cursor-default" : ""}
+            onClick={(e) => {
+              if (!canGoForward) {
+                e.preventDefault();
+              } else {
+                setCurrentIndex((prev) => prev + 1);
+              }
+            }}
+          >
             <ArrowRightIcon className="text-primary mb-1 md:mb-0 size-5 md:size-8" />
           </Link>
         </div>
+
         <div className="flex justify-center items-center grow mb-2">
           <Link to="/">
-            {" "}
             <HomeIcon className="text-primary size-5 md:size-8" />
           </Link>
           <Input
@@ -85,10 +125,10 @@ const Header = () => {
                 : "/"
             }
           >
-            {" "}
             <SearchIcon className="text-primary size-5 md:size-8" />
           </Link>
         </div>
+
         <div className="text-white mr-4">
           <SignedIn>
             <UserButton appearance={userButtonAppearance} />
