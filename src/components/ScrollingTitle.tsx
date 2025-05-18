@@ -3,12 +3,11 @@ import { useState, useRef, useEffect } from "react";
 export function ScrollingTitle({ title }: { title: string }) {
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const containerRef = useRef(null);
-  const titleRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
   const [duplicatedTitle, setDuplicatedTitle] = useState(title);
   const [animationDuration, setAnimationDuration] = useState(0);
 
-  // Check if text is overflowing and set up the duplicated text for seamless scrolling
   useEffect(() => {
     if (titleRef.current && containerRef.current) {
       const isTextOverflowing =
@@ -16,13 +15,10 @@ export function ScrollingTitle({ title }: { title: string }) {
       setIsOverflowing(isTextOverflowing);
 
       if (isTextOverflowing) {
-        // Add space and duplicate the title for continuous scrolling
         setDuplicatedTitle(`${title}     ${title}`);
 
-        // Calculate animation duration based on text length (slower for longer texts)
-        // Using a slower base speed of 30s for standard text length
-        const baseSpeed = 5; // seconds
-        const standardLength = 30; // characters
+        const baseSpeed = 5;
+        const standardLength = 30;
         const speedFactor = Math.max(1, title.length / standardLength);
         setAnimationDuration(baseSpeed * speedFactor);
       }
@@ -51,20 +47,6 @@ export function ScrollingTitle({ title }: { title: string }) {
       >
         {isOverflowing ? duplicatedTitle : title}
       </div>
-
-      {/* Add keyframes for the animation */}
-      {isOverflowing && (
-        <style jsx>{`
-          @keyframes marquee {
-            0% {
-              transform: translateX(0);
-            }
-            100% {
-              transform: translateX(-50%);
-            }
-          }
-        `}</style>
-      )}
     </div>
   );
 }
