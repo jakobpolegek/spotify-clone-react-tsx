@@ -1,25 +1,44 @@
 import { useSearchParams } from "react-router-dom";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useAuth } from "@clerk/clerk-react";
 import { useEffect, useState, useRef } from "react";
 import { Spinner } from "../components/ui/spinner";
+import { ScrollingTitle } from "../components/ScrollingTitle";
 import { Link } from "react-router-dom";
 import { useDebounce } from "../hooks/useDebounce";
-import { performSearch } from "../utils/api/searchDatabase";
 import { MusicIcon } from "lucide-react";
 import { ISearchResult } from "../types/ISearchResult";
+import { callPerformSearchEdgeFunction } from "../utils/api/callPerformSearch";
 
 const SearchPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [searchResults, setSearchResults] = useState<ISearchResult[]>();
+  const [searchResults, setSearchResults] = useState<ISearchResult[]>([]);
+
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
-  const debouncedQuery = useDebounce(query, 500);
+
+  const debouncedQuery = useDebounce(query, 1000);
   const { user } = useUser();
+  const { getToken } = useAuth();
+  const getClerkToken = async () => {
+    return await getToken({ template: "supabase" });
+  };
+
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  if (!user) throw new Error("User not authenticated");
+  if (!user) {
+    useEffect(() => {
+      setLoading(false);
+      setSearchResults([]);
+    }, []);
+  }
 
   useEffect(() => {
+    if (!user || !user.id) {
+      if (!user) setSearchResults([]);
+      setLoading(false);
+      return;
+    }
+
     const fetchResults = async () => {
       if (!debouncedQuery || debouncedQuery.trim() === "") {
         setSearchResults([]);
@@ -36,27 +55,29 @@ const SearchPage = () => {
       const signal = abortControllerRef.current.signal;
 
       try {
-        const results = await performSearch(debouncedQuery, user.id, signal);
-
-        const filteredResults = results.filter((result: ISearchResult) => {
-          if (
-            result.type === "author" ||
-            result.type === "album" ||
-            result.type === "storage_song"
-          ) {
-            return true;
-          }
-
-          return result.user_id === user.id;
+        const results = await callPerformSearchEdgeFunction({
+          query: debouncedQuery,
+          userId: user.id,
+          getClerkToken,
+          signal,
         });
-        setSearchResults(filteredResults);
+
+        if (!signal.aborted) {
+          setSearchResults(results);
+        }
       } catch (err: any) {
         if (err.name === "AbortError") {
         } else {
-          throw new Error("Failed to perform search. Please try again.");
+          if (!signal.aborted) {
+            setSearchResults([]);
+          }
+
+          throw new Error("Failed to perform search: " + err.message);
         }
       } finally {
-        setLoading(false);
+        if (!signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -67,9 +88,10 @@ const SearchPage = () => {
         abortControllerRef.current.abort();
       }
     };
-  }, [debouncedQuery, user.id]);
+  }, [debouncedQuery, user]);
 
   const totalResults = searchResults?.length;
+
   return (
     <div className="p-4 max-w-6xl mx-auto">
       {loading ? (
@@ -108,58 +130,26 @@ const SearchPage = () => {
                   >
                     <div
                       key={result.id || result.title || result}
-                      className="flex bg-slate-700 p-3 rounded hover:bg-slate-600 transition-colors"
+                      className="flex bg-slate-700 p-3 rounded hover:bg-slate-600 transition-colors w-[300px] h-[100px]"
                     >
                       <div className="flex-shrink-0 w-16 h-16 mr-3">
-                        {(() => {
-                          if (
-                            [
-                              "album",
-                              "author",
-                              "liked_song",
-                              "playlist_song",
-                              "storage_song",
-                            ].includes(result.type)
-                          ) {
-                            return (
-                              <img
-                                src={result.image}
-                                alt={result.title}
-                                className="w-full h-full object-cover rounded"
-                              />
-                            );
-                          }
-                          switch (result.type) {
-                            case "playlist":
-                              return (
-                                <>
-                                  {result.image ? (
-                                    <img
-                                      src={result.image}
-                                      alt={result.title}
-                                      className="w-full h-full object-cover rounded"
-                                    />
-                                  ) : (
-                                    <MusicIcon className="text-primary w-full h-full object-cover rounded" />
-                                  )}
-                                </>
-                              );
-                            default:
-                              return (
-                                <MusicIcon className=" text-primary w-full h-full object-cover rounded" />
-                              );
-                          }
-                        })()}
+                        {result.image ? (
+                          <img
+                            src={result.image}
+                            alt={result.title}
+                            className="w-full h-full object-cover rounded"
+                          />
+                        ) : (
+                          <MusicIcon className="w-full h-full object-cover rounded text-primary" />
+                        )}
                       </div>
-                      <div>
-                        <h3 className="font-medium text-white text-xl">
-                          {result.title
+                      <div className="overflow-hidden flex-1">
+                        <ScrollingTitle
+                          title={result.title
                             ?.replace(/^[0-9]{2}\s-\s/, "")
-                            .replace(/\.mp3$/, "") ||
-                            result.name ||
-                            result}
-                        </h3>
-                        <h3 className="font-light text-md text-gray-400">
+                            .replace(/\.mp3$/, "")}
+                        />
+                        <h3 className="font-light text-sm text-gray-400">
                           {(() => {
                             switch (result.type) {
                               case "album":
