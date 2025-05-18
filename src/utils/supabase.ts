@@ -10,6 +10,10 @@ export const setCurrentSession = (session: any) => {
   currentSession = session;
 };
 
+export const getCurrentSession = () => {
+  return currentSession;
+};
+
 export const getSupabaseClient = (): SupabaseClient => {
   if (!supabaseClient) {
     supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
