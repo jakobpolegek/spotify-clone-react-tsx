@@ -20,7 +20,7 @@ const MainLayout = () => {
           <NavigationSidebar />
           <div
             id="outlet"
-            className="col-span-8 md:col-span-10 lg:col-span-9 row-span-1 overflow-hidden h-[calc(100vh-186px)]"
+            className="mx-4 md:ml-0 col-span-10 md:col-span-9 row-span-1 overflow-hidden h-[calc(100vh-186px)]"
           >
             <Outlet />
           </div>

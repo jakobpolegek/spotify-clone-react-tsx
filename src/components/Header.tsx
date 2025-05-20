@@ -37,7 +37,7 @@ const Header = () => {
   };
 
   return (
-    <div className="col-span-10 bg-slate-800 rounded ml-4 mr-5 md:mr-4 mt-2">
+    <div className="col-span-10 bg-slate-800 rounded mx-4 mt-2">
       <div className="flex mt-2">
         <div className="flex justify-center items-center grow mb-2">
           <Link to="/">
