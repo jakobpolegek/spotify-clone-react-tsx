@@ -5,7 +5,9 @@ export function ScrollingTitle({ title }: { title: string }) {
   const [isHovering, setIsHovering] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
-  const [duplicatedTitle, setDuplicatedTitle] = useState(title);
+  const [duplicatedTitle, setDuplicatedTitle] = useState(
+    `${title}     ${title}`
+  );
   const [animationDuration, setAnimationDuration] = useState(0);
 
   useEffect(() => {
@@ -21,9 +23,11 @@ export function ScrollingTitle({ title }: { title: string }) {
         const standardLength = 30;
         const speedFactor = Math.max(1, title.length / standardLength);
         setAnimationDuration(baseSpeed * speedFactor);
+      } else {
+        setDuplicatedTitle(title);
       }
     }
-  }, [title]);
+  }, [title, containerRef, titleRef]);
 
   return (
     <div

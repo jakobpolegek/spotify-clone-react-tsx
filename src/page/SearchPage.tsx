@@ -2,7 +2,6 @@ import { useSearchParams } from "react-router-dom";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import { useEffect, useState, useRef } from "react";
 import { Spinner } from "../components/ui/spinner";
-import { ScrollingTitle } from "../components/ScrollingTitle";
 import { Link } from "react-router-dom";
 import { useDebounce } from "../hooks/useDebounce";
 import { MusicIcon } from "lucide-react";
@@ -93,84 +92,80 @@ const SearchPage = () => {
   const totalResults = searchResults?.length;
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
+    <div className="p-4">
       {loading ? (
         <Spinner />
       ) : totalResults && totalResults > 0 ? (
-        <div className="space-y-8">
+        <>
           {searchResults?.length > 0 && (
-            <section>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {searchResults?.map((result: any) => (
-                  <Link
-                    to={(() => {
-                      if (
-                        [
-                          "album",
-                          "song",
-                          "liked_song",
-                          "playlist_song",
-                        ].includes(result.type)
-                      ) {
-                        return `/artist/${result.author_id}/albums/${result.routeToUrl}`;
-                      }
-                      switch (result.type) {
-                        case "author":
-                          return `/artist/${result.routeToUrl}`;
-                        case "playlist":
-                          return `/playlist/${result.routeToUrl}`;
-                        case "storage_song":
-                          const [artistId, albumId] = result.folder.split("-");
-                          return `/artist/${artistId}/albums/${albumId}`;
-                        default:
-                          return "/";
-                      }
-                    })()}
+            <div className="grid col-span-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-scroll max-h-screen">
+              {searchResults?.map((result: any) => (
+                <Link
+                  className="w-auto"
+                  to={(() => {
+                    if (
+                      ["album", "song", "liked_song", "playlist_song"].includes(
+                        result.type
+                      )
+                    ) {
+                      return `/artist/${result.author_id}/albums/${result.routeToUrl}`;
+                    }
+                    switch (result.type) {
+                      case "author":
+                        return `/artist/${result.routeToUrl}`;
+                      case "playlist":
+                        return `/playlist/${result.routeToUrl}`;
+                      case "storage_song":
+                        const [artistId, albumId] = result.folder.split("-");
+                        return `/artist/${artistId}/albums/${albumId}`;
+                      default:
+                        return "/";
+                    }
+                  })()}
+                  key={result.id || result.title || result}
+                >
+                  <div
                     key={result.id || result.title || result}
+                    className="flex bg-slate-700 p-3 rounded hover:bg-slate-600 transition-colors w-full max-h-[100px]"
                   >
-                    <div
-                      key={result.id || result.title || result}
-                      className="flex bg-slate-700 p-3 rounded hover:bg-slate-600 transition-colors w-[300px] h-[100px]"
-                    >
-                      <div className="flex-shrink-0 w-16 h-16 mr-3">
-                        {result.image ? (
-                          <img
-                            src={result.image}
-                            alt={result.title}
-                            className="w-full h-full object-cover rounded"
-                          />
-                        ) : (
-                          <MusicIcon className="w-full h-full object-cover rounded text-primary" />
-                        )}
-                      </div>
-                      <div className="overflow-hidden flex-1">
-                        <ScrollingTitle
-                          title={result.title
-                            ?.replace(/^[0-9]{2}\s-\s/, "")
-                            .replace(/\.mp3$/, "")}
+                    <div className="flex-shrink-0 w-16 h-16 mr-3">
+                      {result.image ? (
+                        <img
+                          src={result.image}
+                          alt={result.title}
+                          className="w-full h-full object-cover rounded"
                         />
-                        <h3 className="font-light text-sm text-gray-400">
-                          {(() => {
-                            switch (result.type) {
-                              case "album":
-                                return `Album`;
-                              case "author":
-                                return `Artist`;
-                              case "playlist":
-                                return `Playlist`;
-                              default:
-                                return "Song";
-                            }
-                          })()}
-                        </h3>
-                      </div>
+                      ) : (
+                        <MusicIcon className="w-full h-full object-cover rounded text-primary" />
+                      )}
                     </div>
-                  </Link>
-                ))}
-              </div>
-            </section>
+                    <div className="overflow-hidden flex-1">
+                      <h1 className="font-medium text-white text-lg flex-wrap">
+                        {result.title
+                          ?.replace(/^[0-9]{2}\s-\s/, "")
+                          .replace(/\.mp3$/, "")}
+                      </h1>
+                      <h3 className="font-light text-sm text-gray-400">
+                        {(() => {
+                          switch (result.type) {
+                            case "album":
+                              return `Album`;
+                            case "author":
+                              return `Artist`;
+                            case "playlist":
+                              return `Playlist`;
+                            default:
+                              return "Song";
+                          }
+                        })()}
+                      </h3>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           )}
-        </div>
+        </>
       ) : query ? (
         <div className="text-center py-10">
           <p className="text-lg">No results found for "{query}".</p>
