@@ -77,21 +77,21 @@ const SongsSection = ({
             className="flex flex-col md:flex-row items-center mb-2 md:mb-6"
           >
             {page === 1 ? (
-              <HeartIcon className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4 text-primary" />
+              <HeartIcon className="h-32 w-32 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4 text-primary" />
             ) : page === 2 ? (
               coverImage ? (
                 <img
                   src={coverImage}
-                  className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
+                  className="h-32 w-32 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
                 />
               ) : (
-                <MusicIcon className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4 text-primary" />
+                <MusicIcon className="h-32 w-32 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4 text-primary" />
               )
             ) : (
               album && (
                 <img
                   src={album.cover}
-                  className="h-24 w-24 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
+                  className="h-32 w-32 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
                 />
               )
             )}
