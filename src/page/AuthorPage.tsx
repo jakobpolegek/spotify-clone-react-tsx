@@ -55,22 +55,25 @@ const AuthorPage = () => {
               <h3 className="flex md:inline text-2xl md:text-4xl font-extrabold mt-10 md:ml-8 justify-center text-white ">
                 Discography
               </h3>
-              <div id="albums" className="inline-flex flex-wrap">
+              <div
+                id="albums"
+                className="inline-flex flex-wrap justify-center md:justify-normal"
+              >
                 {albums?.map((album) => (
                   <div
                     key={album.id}
                     id="album"
-                    className="text-center md:text-left"
+                    className="text-center md:text-left md:ml-12"
                   >
                     <Link to={`/artist/${author.id}/albums/${album.id}`}>
                       <img
                         src={album.cover}
-                        className="h-48 w-48 md:h-60 md:w-60 m-4 ml-12 mt-6"
+                        className="h-48 w-48 md:h-60 md:w-60 m-4 mt-6"
                       />
-                      <h1 className="text-xl md:text-2xl font-bold ml-12 text-white">
+                      <h1 className="text-xl md:text-2xl font-bold text-white">
                         {album.title}
                       </h1>
-                      <h3 className="text-gray-400 ml-12">{`${new Date(
+                      <h3 className="text-gray-400">{`${new Date(
                         album.createdAt
                       ).toLocaleString("en-US", {
                         month: "long",
