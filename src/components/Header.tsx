@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useState, useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SearchIcon, HomeIcon } from "lucide-react";
 import { Input } from "./ui/input.tsx";
@@ -18,6 +18,15 @@ const userButtonAppearance = {
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const path = window.location.pathname;
+    if (!queryParams.has('q') || path !== '/search') {
+      setSearchTerm('');
+    }
+  }, [window.location.search, window.location.pathname]);
+
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

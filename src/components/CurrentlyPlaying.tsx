@@ -7,12 +7,12 @@ const CurrentlyPlaying = () => {
   const currentlyPlaying = useSelector(selectCurrentlyPlaying);
   
   return (
-    <div className="flex flex-row items-end mb-2 max-w-500 mr-6">
+    <div className="rounded-sm flex flex-row items-end mb-2 max-w-500 mr-6">
       {currentlyPlaying ? (
         <>
           {currentlyPlaying.cover ? (
             <Link to={`/artist/${currentlyPlaying.authors[0].id}/albums/${currentlyPlaying.albumId}`}>
-              <img className="w-12 h-16 mt-2 md:mt-0 md:m-1 md:ml-4 md:w-16 md:h-16" src={currentlyPlaying.cover} />
+              <img className="w-12 h-16 mt-2 md:mt-0 md:m-1 md:ml-4 md:w-16 md:h-16" src={currentlyPlaying.cover} alt="cover"/>
             </Link>
           ) : (
             <></>

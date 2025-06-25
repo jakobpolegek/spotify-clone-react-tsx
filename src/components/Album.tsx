@@ -8,7 +8,7 @@ export const Album = ({ album }: { album: IAlbum }) => {
       <Link key={album.id} to={`/artist/${album.authors[0]?.id}/albums/${album.id}`}>
         <img 
           src={album.cover} 
-          className="w-full aspect-square object-cover mb-2" 
+          className="rounded-sm w-full aspect-square object-cover mb-2"
           alt={album.title} 
         />
         <h1 className="text-sm lg:text-lg font-bold truncate">{album.title}</h1>

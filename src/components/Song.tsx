@@ -3,7 +3,7 @@ import {
     Play,
     Pause,
   } from "lucide-react";
-  import { Button } from "../components/ui/button";
+import {Button} from "./ui/button";
 import {
     selectCurrentlyPlaying,
     playAudio
@@ -39,7 +39,7 @@ export const Song = ({ song, isPlaying, page = 0 }: { song:ISong, isPlaying:bool
         </Button>
       )}
       {page !== 0 ? (
-        <img className="m-1 ml-5 w-16 h-16" src={song.cover} />
+        <img className="rounded-sm m-1 ml-5 w-16 h-16" src={song.cover} alt="cover"/>
       ) : null}
       <div id="song-metadata" className="flex flex-col ml-4">
         <Link to={`/artist/${song?.authors[0].id}/albums/${song?.albumId}`}>

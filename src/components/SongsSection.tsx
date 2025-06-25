@@ -1,31 +1,31 @@
-import { Song } from "../components/Song";
-import { useDispatch, useSelector } from "react-redux";
+import {Song} from "./Song";
+import {useDispatch, useSelector} from "react-redux";
 import {
   selectIsPlaying,
   clearQueue,
   setQueue,
   playNextSong,
 } from "../slices/audioPlayerSlice";
-import { ContextMenu, ContextMenuTrigger } from "../components/ui/context-menu";
+import {ContextMenu, ContextMenuTrigger} from "./ui/context-menu";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
+} from "./ui/dropdown-menu";
 import {
   PlayCircleIcon,
   EllipsisIcon,
   HeartIcon,
   MusicIcon,
 } from "lucide-react";
-import { SongContextMenu } from "../components/SongContextMenu";
-import { PlaylistDropDownMenu } from "../components/PlaylistDropdownMenu";
-import { AppDispatch } from "../store";
-import { ISong } from "../types/ISong";
-import { UserResource } from "@clerk/types";
-import { IAlbum } from "../types/IAlbum";
-import { Authors } from "./Authors";
-import { useEffect, useState } from "react";
-import { getPlaylistInfo } from "../utils/api/getPlaylistsInfo";
+import {SongContextMenu} from "./SongContextMenu";
+import {PlaylistDropDownMenu} from "./PlaylistDropdownMenu";
+import {AppDispatch} from "../store";
+import {ISong} from "../types/ISong";
+import {UserResource} from "@clerk/types";
+import {IAlbum} from "../types/IAlbum";
+import {Authors} from "./Authors";
+import {useEffect, useState} from "react";
+import {getPlaylistInfo} from "../utils/api/getPlaylistsInfo";
 
 const SongsSection = ({
   user,
@@ -82,7 +82,8 @@ const SongsSection = ({
               coverImage ? (
                 <img
                   src={coverImage}
-                  className="h-32 w-32 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
+                  className="rounded-sm h-32 w-32 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
+                  alt="cover"
                 />
               ) : (
                 <MusicIcon className="h-32 w-32 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4 text-primary" />
@@ -91,7 +92,8 @@ const SongsSection = ({
               album && (
                 <img
                   src={album.cover}
-                  className="h-32 w-32 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
+                  className="rounded-sm h-32 w-32 md:h-60 md:w-60 mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
+                  alt="cover"
                 />
               )
             )}

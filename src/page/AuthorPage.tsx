@@ -38,7 +38,8 @@ const AuthorPage = () => {
           <div className="flex-col md:flex-row items-center flex-shrink-0 flex justify-center md:justify-normal bg-slate-800 text-white border-2 rounded border-slate-800">
             <img
               src={author.image}
-              className="h-32 w-32 md:h-60 md:w-60 mb-2 md:mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
+              className="rounded-sm h-32 w-32 md:h-60 md:w-60 mb-2 md:mb-4 ml-2 md:ml-12 md:mt-12 mt-4"
+              alt="author"
             />
             <div className="flex flex-col md:ml-6 md:mt-10 items-center md:items-start">
               <h1
@@ -68,7 +69,8 @@ const AuthorPage = () => {
                     <Link to={`/artist/${author.id}/albums/${album.id}`}>
                       <img
                         src={album.cover}
-                        className="h-48 w-48 md:h-60 md:w-60 m-4 mt-6"
+                        className="rounded-sm h-48 w-48 md:h-60 md:w-60 m-4 mt-6"
+                        alt="cover"
                       />
                       <h1 className="text-xl md:text-2xl font-bold text-white">
                         {album.title}
