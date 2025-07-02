@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Button } from "./ui/button";
+import { useEffect } from 'react';
+import { Button } from './ui/button';
 import {
   SkipBackIcon,
   PlayIcon,
@@ -9,10 +9,10 @@ import {
   Volume1,
   Volume2,
   VolumeX,
-} from "lucide-react";
-import { Slider } from "./ui/slider";
-import CurrentlyPlaying from "./CurrentlyPlaying";
-import { useSelector, useDispatch } from "react-redux";
+} from 'lucide-react';
+import { Slider } from './ui/slider';
+import CurrentlyPlaying from './CurrentlyPlaying';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   pauseAudio,
   playAudio,
@@ -27,8 +27,8 @@ import {
   toggleMute,
   selectVolume,
   selectIsMuted,
-} from "../slices/audioPlayerSlice";
-import { AppDispatch } from "../store";
+} from '../slices/audioPlayerSlice';
+import { AppDispatch } from '../store';
 
 const Player = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -48,13 +48,13 @@ const Player = () => {
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = Math.floor(timeInSeconds % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
   const handlePlay = () => {
     try {
       dispatch(playAudio());
-    } catch (error) {
+    } catch {
       throw new Error(`An error occurred trying to play this song.`);
     }
   };
@@ -62,14 +62,14 @@ const Player = () => {
   const handlePlayNextSong = () => {
     try {
       dispatch(playNextSong());
-    } catch (error) {
+    } catch {
       throw new Error(`An error occurred trying to play this song.`);
     }
   };
   const handlePlayPreviousSong = () => {
     try {
       dispatch(playPreviousSong());
-    } catch (error) {
+    } catch {
       throw new Error(`An error occurred trying to play this song.`);
     }
   };
@@ -77,7 +77,7 @@ const Player = () => {
   const handlePause = () => {
     try {
       dispatch(pauseAudio());
-    } catch (error) {
+    } catch {
       throw new Error(`An error occurred trying to pause this song.`);
     }
   };

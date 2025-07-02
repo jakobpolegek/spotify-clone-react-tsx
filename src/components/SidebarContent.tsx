@@ -1,6 +1,6 @@
-import { HeartIcon, ListIcon } from "lucide-react";
-import { Link } from "react-router-dom";
-import { IPlaylist } from "../types/IPlaylist";
+import { HeartIcon, ListIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { IPlaylist } from '../types/IPlaylist';
 
 export const SidebarContent = ({
   onClick,

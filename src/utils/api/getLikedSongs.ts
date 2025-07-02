@@ -1,14 +1,15 @@
-import { ISong } from "../../types/ISong";
-import { ILikedSong } from "../../types/ILikedSong";
-import { getSupabaseClient } from "../supabase";
+import { ISong } from '../../types/ISong';
+import { ILikedSong } from '../../types/ILikedSong';
+import { getSupabaseClient } from '../supabase';
 
 export const getLikedSongs = async (userId: string): Promise<ISong[]> => {
   try {
     const supabase = getSupabaseClient();
 
     const { data: likedSongs, error: likedSongsError } = await supabase
-      .from("likedSongs")
-      .select(`
+      .from('likedSongs')
+      .select(
+        `
         title,
         albumId,
         albums:albumId (
@@ -19,13 +20,14 @@ export const getLikedSongs = async (userId: string): Promise<ISong[]> => {
           id,
           name
         )
-      `)
-      .eq("user_id", userId)
-      .order("createdAt", { ascending: false })
+      `
+      )
+      .eq('user_id', userId)
+      .order('createdAt', { ascending: false })
       .returns<ILikedSong[]>();
 
     if (likedSongsError) {
-      throw new Error("Error fetching liked songs: " + likedSongsError.message);
+      throw new Error('Error fetching liked songs: ' + likedSongsError.message);
     }
 
     if (!likedSongs || likedSongs.length === 0) {
@@ -46,25 +48,30 @@ export const getLikedSongs = async (userId: string): Promise<ISong[]> => {
           authors: [likedSong.authors],
         };
       } else if (
-        !songMap[key].authors.some((author) => author.id === likedSong.authors.id)
+        songMap[key] &&
+        songMap[key].authors &&
+        !songMap[key].authors.some(
+          (author) => author.id === likedSong.authors.id
+        )
       ) {
         songMap[key].authors.push(likedSong.authors);
       }
     }
 
     await Promise.all(
-      Object.entries(songMap).map(async ([_, song]) => {
+      Object.entries(songMap).map(async ([, song]) => {
         const fileName = song.title;
         const filePath = song.bucketFolderName
           ? `${song.bucketFolderName}/${fileName}`
           : fileName;
 
-        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-          .from("songs")
-          .createSignedUrl(filePath, 18000);
+        const { data: signedUrlData, error: signedUrlError } =
+          await supabase.storage.from('songs').createSignedUrl(filePath, 18000);
 
         if (signedUrlError) {
-          throw new Error("Error creating signed URL: " + signedUrlError.message);
+          throw new Error(
+            'Error creating signed URL: ' + signedUrlError.message
+          );
         }
 
         song.source = signedUrlData?.signedUrl;
@@ -73,6 +80,6 @@ export const getLikedSongs = async (userId: string): Promise<ISong[]> => {
 
     return Object.values(songMap);
   } catch (error) {
-    throw new Error("Error fetching liked songs: " + error);
+    throw new Error('Error fetching liked songs: ' + error);
   }
 };

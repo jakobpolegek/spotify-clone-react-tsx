@@ -1,14 +1,18 @@
-import { IPlaylistSong } from "../../types/IPlaylistSong";
-import { getSupabaseClient } from "../supabase";
-import { ISong } from "../../types/ISong";
+import { IPlaylistSong } from '../../types/IPlaylistSong';
+import { getSupabaseClient } from '../supabase';
+import { ISong } from '../../types/ISong';
 
-export const getPlaylistSongs = async (playlistId: string, userId: string): Promise<ISong[]> => {
+export const getPlaylistSongs = async (
+  playlistId: string,
+  userId: string
+): Promise<ISong[]> => {
   try {
     const supabase = getSupabaseClient();
 
     const { data: playlistEntries, error } = await supabase
-      .from("flattened_playlist_songs")
-      .select(`
+      .from('flattened_playlist_songs')
+      .select(
+        `
         title,
         albumId,
         name,
@@ -21,14 +25,15 @@ export const getPlaylistSongs = async (playlistId: string, userId: string): Prom
           name
         ),
         createdAt
-      `)
-      .eq("playlistId", playlistId)
-      .eq("user_id", userId)
-      .order("createdAt", { ascending: false })
+      `
+      )
+      .eq('playlistId', playlistId)
+      .eq('user_id', userId)
+      .order('createdAt', { ascending: false })
       .returns<IPlaylistSong[]>();
-      
+
     if (error) {
-      throw new Error("Error fetching playlist songs: " + error.message);
+      throw new Error('Error fetching playlist songs: ' + error.message);
     }
 
     if (!playlistEntries || playlistEntries.length === 0) {
@@ -39,40 +44,44 @@ export const getPlaylistSongs = async (playlistId: string, userId: string): Prom
 
     for (const entry of playlistEntries) {
       const key = `${entry.title}_${entry.albumId}`;
+      const existingSong = songMap[key];
 
-      if (!songMap[key]) {
+      if (!existingSong) {
         songMap[key] = {
           title: entry.title,
           albumId: entry.albumId,
           cover: entry.albums.cover,
           bucketFolderName: entry.albums.bucketFolderName,
           name: entry.name,
-          authors: [entry.authors]
+          authors: [entry.authors],
         };
       } else {
-        const authorExists = songMap[key].authors.some(
-          author => author.id === entry.authors.id
-        );
+        if (existingSong.authors) {
+          const authorExists = existingSong.authors.some(
+            (author) => author.id === entry.authors.id
+          );
 
-        if (!authorExists) {
-          songMap[key].authors.push(entry.authors);
+          if (!authorExists) {
+            existingSong.authors.push(entry.authors);
+          }
         }
       }
     }
 
     await Promise.all(
-      Object.entries(songMap).map(async ([_, song]) => {
+      Object.entries(songMap).map(async ([, song]) => {
         const fileName = song.title;
         const filePath = song.bucketFolderName
           ? `${song.bucketFolderName}/${fileName}`
           : fileName;
 
-        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-          .from("songs")
-          .createSignedUrl(filePath, 18000);
+        const { data: signedUrlData, error: signedUrlError } =
+          await supabase.storage.from('songs').createSignedUrl(filePath, 18000);
 
         if (signedUrlError) {
-          throw new Error("Error creating signed URL: " + signedUrlError.message);
+          throw new Error(
+            'Error creating signed URL: ' + signedUrlError.message
+          );
         }
 
         song.source = signedUrlData?.signedUrl;
@@ -80,6 +89,6 @@ export const getPlaylistSongs = async (playlistId: string, userId: string): Prom
     );
     return Object.values(songMap);
   } catch (error) {
-    throw new Error("Error fetching playlist songs: " + error);
+    throw new Error('Error fetching playlist songs: ' + error);
   }
 };

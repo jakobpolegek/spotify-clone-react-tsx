@@ -1,5 +1,5 @@
-import { configureStore } from "@reduxjs/toolkit";
-import audioPlayerReducer from "./slices/audioPlayerSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import audioPlayerReducer from './slices/audioPlayerSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +10,8 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-declare module "@reduxjs/toolkit" {
-  interface DefaultRootState extends RootState {}
+declare module '@reduxjs/toolkit' {
+  interface DefaultRootState extends RootState {
+    audioPlayer: ReturnType<typeof audioPlayerReducer>;
+  }
 }

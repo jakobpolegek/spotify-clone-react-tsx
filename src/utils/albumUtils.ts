@@ -1,5 +1,5 @@
-import { IAlbum } from "../types/IAlbum";
-import { IGroupedAlbums } from "../types/IGroupedAlbums";
+import { IAlbum } from '../types/IAlbum';
+import { IGroupedAlbums } from '../types/IGroupedAlbums';
 
 export const processAlbums = (rawAlbums: IAlbum[]): IAlbum[] => {
   const groupedAlbums = rawAlbums.reduce<IGroupedAlbums>((acc, album) => {

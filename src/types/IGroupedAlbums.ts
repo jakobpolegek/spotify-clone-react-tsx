@@ -1,4 +1,4 @@
-import { IAlbum } from "./IAlbum";
+import { IAlbum } from './IAlbum';
 
 export interface IGroupedAlbums {
   [key: string]: IAlbum;

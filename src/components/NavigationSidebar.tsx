@@ -1,10 +1,10 @@
-import { MenuIcon } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import { selectPlaylists, setPlaylists } from "../slices/audioPlayerSlice";
-import { useEffect, useState, useRef } from "react";
-import { getPlaylists } from "../utils/api/getPlaylists";
-import { useUser } from "@clerk/clerk-react";
-import { SidebarContent } from "./SidebarContent";
+import { MenuIcon } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectPlaylists, setPlaylists } from '../slices/audioPlayerSlice';
+import { useEffect, useState, useRef } from 'react';
+import { getPlaylists } from '../utils/api/getPlaylists';
+import { useUser } from '@clerk/clerk-react';
+import { SidebarContent } from './SidebarContent';
 
 const NavigationSidebar = () => {
   const dispatch = useDispatch();
@@ -13,7 +13,7 @@ const NavigationSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
-  if (!user) throw new Error("User not authenticated");
+  if (!user) throw new Error('User not authenticated');
 
   const fetchPlaylists = async () => {
     try {
@@ -22,7 +22,7 @@ const NavigationSidebar = () => {
         dispatch(setPlaylists(playlists));
       }
     } catch (error) {
-      throw new Error("Failed to fetch playlists: " + error);
+      throw new Error('Failed to fetch playlists: ' + error);
     }
   };
 
@@ -41,9 +41,9 @@ const NavigationSidebar = () => {
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
 
@@ -78,7 +78,7 @@ const NavigationSidebar = () => {
           fixed left-0 top-0 h-[calc(100vh-106px)] w-64 z-40
           ml-0 bg-slate-800 rounded p-4
           transition-transform duration-300
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           md:hidden
           border-slate-900 border-r-8
         `}

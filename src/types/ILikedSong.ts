@@ -1,9 +1,9 @@
-import { IAuthor } from "./IAuthor";
-import { IAlbum } from "./IAlbum";
+import { IAuthor } from './IAuthor';
+import { IAlbum } from './IAlbum';
 
 export interface ILikedSong {
   title: string;
   albumId: number;
-  albums:  Pick<IAlbum, 'cover' | 'bucketFolderName'>;
+  albums: Pick<IAlbum, 'cover' | 'bucketFolderName'>;
   authors: IAuthor;
 }

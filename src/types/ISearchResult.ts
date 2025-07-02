@@ -1,18 +1,19 @@
 export interface ISearchResult {
-  id?: number;
+  id: number;
   title: string;
   type:
-    | "album"
-    | "author"
-    | "song"
-    | "liked_song"
-    | "storage_song"
-    | "playlist_song"
-    | "playlist";
+    | 'album'
+    | 'author'
+    | 'song'
+    | 'liked_song'
+    | 'storage_song'
+    | 'playlist_song'
+    | 'playlist';
   image?: string;
   description?: string;
   createdAt: string;
   author_id?: number;
   routeToUrl?: number;
   user_id?: string;
+  folder?: string;
 }

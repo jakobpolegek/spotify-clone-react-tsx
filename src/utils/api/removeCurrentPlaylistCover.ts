@@ -1,8 +1,11 @@
-import { getSupabaseClient } from "../supabase";
+import { getSupabaseClient } from '../supabase';
 
-export const removeCurrentPlaylistCover = async (playlistId: string, userId: string) => {
+export const removeCurrentPlaylistCover = async (
+  playlistId: string,
+  userId: string
+) => {
   const supabase = getSupabaseClient();
-  const bucketName = "playlist-covers"; // Set this statically
+  const bucketName = 'playlist-covers';
 
   try {
     const { data: playlist, error: fetchError } = await supabase
@@ -15,13 +18,13 @@ export const removeCurrentPlaylistCover = async (playlistId: string, userId: str
     if (fetchError) throw fetchError;
 
     const currentCoverUrl = playlist?.cover_image_url;
-    if (!currentCoverUrl) return null; 
+    if (!currentCoverUrl) return null;
 
     const url = new URL(currentCoverUrl);
     const fullPath = url.pathname.split('/object/public/')[1];
-    
+
     if (!fullPath) {
-      throw new Error("Invalid storage URL format");
+      throw new Error('Invalid storage URL format');
     }
 
     const filePath = fullPath.replace(`${bucketName}/`, '');
@@ -33,7 +36,6 @@ export const removeCurrentPlaylistCover = async (playlistId: string, userId: str
     if (deleteError) throw deleteError;
 
     return filePath;
-
   } catch (error) {
     throw new Error(`Failed to remove cover image: ` + error);
   }

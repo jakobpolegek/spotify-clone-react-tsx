@@ -1,7 +1,7 @@
-import { Album } from "../components/Album";
-import { IAlbum } from "../types/IAlbum";
-import { processAlbums } from "../utils/albumUtils";
-import { useLoaderData } from "react-router-dom";
+import { Album } from '../components/Album';
+import { IAlbum } from '../types/IAlbum';
+import { processAlbums } from '../utils/albumUtils';
+import { useLoaderData } from 'react-router-dom';
 
 const HomePage = () => {
   const albums = useLoaderData() as IAlbum[];

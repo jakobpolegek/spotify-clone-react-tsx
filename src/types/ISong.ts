@@ -1,11 +1,11 @@
-import { IAuthor } from "./IAuthor";
+import { IAuthor } from './IAuthor';
 
 export interface ISong {
-  authors: IAuthor[]; 
-  albumId: number;
+  authors?: IAuthor[];
+  albumId?: number;
   title: string;
-  cover?: string; 
-  source?: string; 
-  bucketFolderName?: string; 
+  cover?: string;
+  source?: string;
+  bucketFolderName?: string;
   name?: string;
 }

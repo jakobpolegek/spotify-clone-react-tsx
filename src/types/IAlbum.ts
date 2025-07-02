@@ -1,5 +1,5 @@
-import { IAuthor } from "./IAuthor";
-import { ISong } from "./ISong";
+import { IAuthor } from './IAuthor';
+import { ISong } from './ISong';
 
 export interface IAlbum {
   id: number;

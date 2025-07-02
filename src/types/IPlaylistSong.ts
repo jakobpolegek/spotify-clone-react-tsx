@@ -1,5 +1,5 @@
-import { ILikedSong } from "./ILikedSong";
+import { ILikedSong } from './ILikedSong';
 
 export interface IPlaylistSong extends ILikedSong {
-  name: string; 
+  name: string;
 }

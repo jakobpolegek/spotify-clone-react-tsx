@@ -1,8 +1,13 @@
-import { getSupabaseClient } from "../supabase";
+import { getSupabaseClient } from '../supabase';
+import { IAlbum } from '../../types/IAlbum';
 
-export const getAlbums = async (): Promise<any> => {
+export const getAlbums = async (): Promise<IAlbum[]> => {
   const supabase = getSupabaseClient();
-  const { data: albums } = await supabase.from("albums").select(`
+
+  const { data: albums, error } = await supabase
+    .from('albums')
+    .select(
+      `
         id,
         title,
         createdAt:created_at,
@@ -12,7 +17,14 @@ export const getAlbums = async (): Promise<any> => {
           id,
           name
         )
-      `);
+      `
+    )
+    .returns<IAlbum[]>();
 
-  return albums;
+  if (error) {
+    console.error('Error fetching albums:', error.message);
+    throw new Error('Could not fetch albums.');
+  }
+
+  return albums || [];
 };

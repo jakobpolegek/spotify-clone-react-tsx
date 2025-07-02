@@ -1,48 +1,45 @@
-import {Song} from "./Song";
-import {useDispatch, useSelector} from "react-redux";
+import { Song } from './Song';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   selectIsPlaying,
   clearQueue,
   setQueue,
   playNextSong,
-} from "../slices/audioPlayerSlice";
-import {ContextMenu, ContextMenuTrigger} from "./ui/context-menu";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from '../slices/audioPlayerSlice';
+import { ContextMenu, ContextMenuTrigger } from './ui/context-menu';
+import { DropdownMenu, DropdownMenuTrigger } from './ui/dropdown-menu';
 import {
   PlayCircleIcon,
   EllipsisIcon,
   HeartIcon,
   MusicIcon,
-} from "lucide-react";
-import {SongContextMenu} from "./SongContextMenu";
-import {PlaylistDropDownMenu} from "./PlaylistDropdownMenu";
-import {AppDispatch} from "../store";
-import {ISong} from "../types/ISong";
-import {UserResource} from "@clerk/types";
-import {IAlbum} from "../types/IAlbum";
-import {Authors} from "./Authors";
-import {useEffect, useState} from "react";
-import {getPlaylistInfo} from "../utils/api/getPlaylistsInfo";
+} from 'lucide-react';
+import { SongContextMenu } from './SongContextMenu';
+import { PlaylistDropDownMenu } from './PlaylistDropdownMenu';
+import { AppDispatch } from '../store';
+import { ISong } from '../types/ISong';
+import { UserResource } from '@clerk/types';
+import { IAlbum } from '../types/IAlbum';
+import { Authors } from './Authors';
+import { useEffect, useState } from 'react';
+import { getPlaylistInfo } from '../utils/api/getPlaylistsInfo';
 
 const SongsSection = ({
   user,
   songs,
   page = 0,
   playlistId = null,
-  onSongsChange = null,
+  onSongsChange,
   album = null,
 }: {
   user: UserResource;
   songs: ISong[];
   page: number;
   playlistId: string | null;
-  onSongsChange: any;
+  onSongsChange: () => Promise<void> | null;
   album: IAlbum | null;
 }) => {
-  const [coverImage, setCoverImage] = useState(null);
+  const [coverImage, setCoverImage] = useState<string | null>(null);
   const [collectionName, setCollectionName] = useState(songs[0]?.name);
   const dispatch: AppDispatch = useDispatch();
   const isPlaying = useSelector(selectIsPlaying);
@@ -50,9 +47,12 @@ const SongsSection = ({
   const fetchPlaylistInfo = async () => {
     if (playlistId) {
       const playListInfo = await getPlaylistInfo(playlistId);
-      playListInfo.cover_image_url &&
-        setCoverImage(playListInfo.cover_image_url);
-      setCollectionName(playListInfo.name);
+      if (playListInfo) {
+        if (playListInfo.cover_image_url) {
+          setCoverImage(playListInfo.cover_image_url);
+        }
+        setCollectionName(playListInfo.name);
+      }
     }
   };
 
@@ -103,10 +103,10 @@ const SongsSection = ({
                 className={`lg:text-8xl md:text-6xl font-extrabold text-white break-words max-w-[90vw] md:max-w-[60vw]`}
               >
                 {page === 1
-                  ? "Liked songs"
+                  ? 'Liked songs'
                   : page === 2
-                  ? collectionName
-                  : album?.title}
+                    ? collectionName
+                    : album?.title}
               </h1>
               <h3 className="mt-1 md:mt-4 text-gray-400 flex flex-row">
                 {page === 0 && album ? (

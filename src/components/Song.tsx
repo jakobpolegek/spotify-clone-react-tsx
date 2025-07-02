@@ -1,23 +1,25 @@
-import { ISong } from "../types/ISong";
-import {
-    Play,
-    Pause,
-  } from "lucide-react";
-import {Button} from "./ui/button";
-import {
-    selectCurrentlyPlaying,
-    playAudio
-  } from "../slices/audioPlayerSlice";
-import {  useDispatch, useSelector } from "react-redux";
-import { useAudioControls } from "../utils/songUtils";
-import { Link } from "react-router-dom";
-import { Authors } from "./Authors";
-import { AppDispatch } from "../store";
+import { ISong } from '../types/ISong';
+import { Play, Pause } from 'lucide-react';
+import { Button } from './ui/button';
+import { selectCurrentlyPlaying, playAudio } from '../slices/audioPlayerSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useAudioControls } from '../utils/songUtils';
+import { Link } from 'react-router-dom';
+import { Authors } from './Authors';
+import { AppDispatch } from '../store';
 
-export const Song = ({ song, isPlaying, page = 0 }: { song:ISong, isPlaying:boolean, page:number}) => {
+export const Song = ({
+  song,
+  isPlaying,
+  page = 0,
+}: {
+  song: ISong;
+  isPlaying: boolean;
+  page: number;
+}) => {
   const currentlyPlaying = useSelector(selectCurrentlyPlaying);
   const { handlePlay, handlePause } = useAudioControls();
-  const dispatch:AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   return (
     <div
@@ -32,23 +34,33 @@ export const Song = ({ song, isPlaying, page = 0 }: { song:ISong, isPlaying:bool
         <Button
           variant="link"
           onClick={() => {
-            song.source===currentlyPlaying?.source ? dispatch(playAudio()) : handlePlay(song);
+            if (song.source === currentlyPlaying?.source) {
+              dispatch(playAudio());
+            } else {
+              handlePlay(song);
+            }
           }}
         >
           <Play />
         </Button>
       )}
       {page !== 0 ? (
-        <img className="rounded-sm m-1 ml-5 w-16 h-16" src={song.cover} alt="cover"/>
+        <img
+          className="rounded-sm m-1 ml-5 w-16 h-16"
+          src={song.cover}
+          alt="cover"
+        />
       ) : null}
-      <div id="song-metadata" className="flex flex-col ml-4">
-        <Link to={`/artist/${song?.authors[0].id}/albums/${song?.albumId}`}>
-          <h1>
-            {song.title.replace(/^[0-9]{2}\s-\s/, "").replace(/\.mp3$/, "")}
-          </h1>
-        </Link>
-        <Authors authors={song.authors} isHeader={false}/>
-      </div>
+      {song.authors && (
+        <div id="song-metadata" className="flex flex-col ml-4">
+          <Link to={`/artist/${song?.authors[0].id}/albums/${song?.albumId}`}>
+            <h1>
+              {song.title.replace(/^[0-9]{2}\s-\s/, '').replace(/\.mp3$/, '')}
+            </h1>
+          </Link>
+          <Authors authors={song.authors} isHeader={false} />
+        </div>
+      )}
     </div>
   );
 };

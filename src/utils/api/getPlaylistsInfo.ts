@@ -1,14 +1,21 @@
-import { getSupabaseClient } from "../supabase";
+import { getSupabaseClient } from '../supabase';
+import { IPlaylistInfo } from '../../types/IPlaylistInfo.ts';
 
-export const getPlaylistInfo = async (playlistId: string): Promise<any> => {
+export const getPlaylistInfo = async (
+  playlistId: string
+): Promise<IPlaylistInfo | null> => {
   const supabase = getSupabaseClient();
-  const { data: albums } = await supabase.from("playlists").select(`
+  const { data: playlists } = await supabase
+    .from('playlists')
+    .select(
+      `
         id,
         name,
         cover_image_url
-      `)
-      .eq("id", playlistId)
-      .single();
+      `
+    )
+    .eq('id', playlistId)
+    .single();
 
-  return albums;
+  return playlists;
 };

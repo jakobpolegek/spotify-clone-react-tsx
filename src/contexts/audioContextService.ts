@@ -49,7 +49,7 @@ class AudioContextService {
 
   static resumeContext() {
     const context = this.getInstance();
-    if (context.state === "suspended") {
+    if (context.state === 'suspended') {
       context.resume();
     }
   }

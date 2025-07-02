@@ -1,11 +1,11 @@
-import { Outlet } from "react-router-dom";
-import Player from "../components/Player";
-import "../index.css";
-import NavigationSidebar from "../components/NavigationSidebar.tsx";
-import Header from "../components/Header.tsx";
-import { SignedIn, SignedOut } from "@clerk/clerk-react";
-import WelcomePage from "../page/WelcomePage.tsx";
-import { Toaster } from "../components/ui/toaster";
+import { Outlet } from 'react-router-dom';
+import Player from '../components/Player';
+import '../index.css';
+import NavigationSidebar from '../components/NavigationSidebar.tsx';
+import Header from '../components/Header.tsx';
+import { SignedIn, SignedOut } from '@clerk/clerk-react';
+import WelcomePage from '../page/WelcomePage.tsx';
+import { Toaster } from '../components/ui/toaster';
 
 const MainLayout = () => {
   return (

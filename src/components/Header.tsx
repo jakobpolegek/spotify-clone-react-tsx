@@ -1,22 +1,22 @@
-import {useState, useEffect} from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { SearchIcon, HomeIcon } from "lucide-react";
-import { Input } from "./ui/input.tsx";
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { SearchIcon, HomeIcon } from 'lucide-react';
+import { Input } from './ui/input.tsx';
 import {
   SignedIn,
   SignedOut,
   SignInButton,
   UserButton,
-} from "@clerk/clerk-react";
+} from '@clerk/clerk-react';
 
 const userButtonAppearance = {
   elements: {
-    userButtonAvatarBox: "w-12 h-12",
+    userButtonAvatarBox: 'w-12 h-12',
   },
 };
 
 const Header = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,7 +27,6 @@ const Header = () => {
     }
   }, [window.location.search, window.location.pathname]);
 
-
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -35,12 +34,12 @@ const Header = () => {
     if (value.trim().length > 0) {
       navigate(`/search?q=${encodeURIComponent(value)}`);
     } else {
-      navigate("/");
+      navigate('/');
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && searchTerm.trim().length > 0) {
+    if (e.key === 'Enter' && searchTerm.trim().length > 0) {
       navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
     }
   };
@@ -64,7 +63,7 @@ const Header = () => {
             to={
               searchTerm.trim()
                 ? `/search?q=${encodeURIComponent(searchTerm)}`
-                : "/"
+                : '/'
             }
           >
             <SearchIcon className="text-primary size-5 md:size-8" />

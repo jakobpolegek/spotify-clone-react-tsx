@@ -5,16 +5,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../ui/dialog"
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
-import { IEditPlaylistDialogProps } from "../../types/IEditPlaylistDialogProps"
-import { ChangeEvent, useEffect, useRef, useState } from "react"
-import { UploadCloudIcon } from "lucide-react"
-import { uploadAlbumCover } from "../../utils/api/uploadAlbumCover"
-import { updatePlaylistInfo } from "../../utils/api/updatePlaylistInfo"
-import { removeCurrentPlaylistCover } from "../../utils/api/removeCurrentPlaylistCover"
-import { useToast } from "../../hooks/useToast"
+} from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { IEditPlaylistDialogProps } from '../../types/IEditPlaylistDialogProps';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { UploadCloudIcon } from 'lucide-react';
+import { uploadAlbumCover } from '../../utils/api/uploadAlbumCover';
+import { updatePlaylistInfo } from '../../utils/api/updatePlaylistInfo';
+import { removeCurrentPlaylistCover } from '../../utils/api/removeCurrentPlaylistCover';
+import { useToast } from '../../hooks/useToast';
 
 const EditPlaylistDialog = ({
   id,
@@ -29,13 +29,13 @@ const EditPlaylistDialog = ({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setSelectedFile(file);
-      
+
       const reader = new FileReader();
       reader.onload = (event) => {
         setPreviewUrl(event.target?.result as string);
@@ -52,7 +52,7 @@ const EditPlaylistDialog = ({
 
   useEffect(() => {
     if (!open) {
-      setPlaylistName(name || "");
+      setPlaylistName(name || '');
       setPreviewUrl(null);
       setSelectedFile(null);
     }
@@ -60,7 +60,7 @@ const EditPlaylistDialog = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       if (id && playlistName && playlistName.trim()) {
         setUploading(true);
@@ -68,14 +68,19 @@ const EditPlaylistDialog = ({
         if (selectedFile) {
           await removeCurrentPlaylistCover(id, userId);
         }
-        const publicUrl = previewUrl && selectedFile ? await uploadAlbumCover(userId, selectedFile, id) : null;
-        await updatePlaylistInfo(id,{ name: playlistName, cover_image_url: publicUrl }).then(() => {  
+        const publicUrl =
+          previewUrl && selectedFile
+            ? await uploadAlbumCover(userId, selectedFile, id)
+            : null;
+        await updatePlaylistInfo(id, {
+          name: playlistName,
+          cover_image_url: publicUrl,
+        }).then(() => {
           toast({
-            title: "Playlist updated successfully.",
-            duration: 3000
+            title: 'Playlist updated successfully.',
+            duration: 3000,
           });
         });
-      
       }
 
       if (onOpenChange) {
@@ -86,7 +91,7 @@ const EditPlaylistDialog = ({
         await onSavePlaylistChanges();
       }
     } catch (error) {
-      throw new Error("Error saving playlist changes:"+ error);
+      throw new Error('Error saving playlist changes:' + error);
     } finally {
       setUploading(false);
     }
@@ -94,7 +99,7 @@ const EditPlaylistDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent 
+      <DialogContent
         className="sm:max-w-[425px] bg-slate-900 text-white"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
@@ -105,7 +110,7 @@ const EditPlaylistDialog = ({
               Update the name of playlist or change the cover image.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="flex flex-col items-center gap-4 py-4">
             <input
               type="file"
@@ -116,9 +121,9 @@ const EditPlaylistDialog = ({
               className="hidden"
               onClick={(e) => e.stopPropagation()}
             />
-            
+
             <div className="relative group">
-              <button 
+              <button
                 onClick={handleButtonClick}
                 disabled={uploading}
                 className="p-2 rounded-full transition-colors focus-visible:outline-none"
@@ -127,9 +132,9 @@ const EditPlaylistDialog = ({
               >
                 {previewUrl ? (
                   <div className="relative">
-                    <img 
-                      src={previewUrl} 
-                      alt="Album cover preview" 
+                    <img
+                      src={previewUrl}
+                      alt="Album cover preview"
                       className="h-40 w-40 object-cover rounded-lg"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -160,7 +165,7 @@ const EditPlaylistDialog = ({
               />
             </div>
           </div>
-          
+
           <DialogFooter className="mt-4">
             <Button type="submit" disabled={uploading}>
               Save changes
@@ -169,7 +174,7 @@ const EditPlaylistDialog = ({
         </form>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export default EditPlaylistDialog
+export default EditPlaylistDialog;

@@ -1,5 +1,5 @@
-import { IPlaylist } from "./IPlaylist";
-import { ISong } from "./ISong";
+import { IPlaylist } from './IPlaylist';
+import { ISong } from './ISong';
 
 export interface IAudioPlayerState {
   playlists: IPlaylist[];

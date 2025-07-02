@@ -3,4 +3,5 @@ export interface IPlaylist {
   name: string;
   createdAt: string;
   user_id: string;
+  cover_image_url?: string | null;
 }

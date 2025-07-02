@@ -1,10 +1,10 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import AudioContextService from "../contexts/audioContextService";
-import { IAudioPlayerState } from "../types/IAudioPlayerState";
-import { ISong } from "../types/ISong";
-import { AppDispatch, RootState } from "../store";
-import { IAudioPayload } from "../types/IAudioPayload";
-import { IPlaylist } from "../types/IPlaylist";
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import AudioContextService from '../contexts/audioContextService';
+import { IAudioPlayerState } from '../types/IAudioPlayerState';
+import { ISong } from '../types/ISong';
+import { AppDispatch, RootState } from '../store';
+import { IAudioPayload } from '../types/IAudioPayload';
+import { IPlaylist } from '../types/IPlaylist';
 
 let currentAudioSource: AudioBufferSourceNode | null = null;
 let currentAudioBuffer: AudioBuffer | null = null;
@@ -19,7 +19,7 @@ export const playAudio = createAsyncThunk<
     state: RootState;
     rejectValue: Error;
   }
->("audioPlayer/playAudio", async (song = undefined, { getState, dispatch }) => {
+>('audioPlayer/playAudio', async (song = undefined, { getState, dispatch }) => {
   try {
     let audioBuffer: AudioBuffer;
     let targetSongUrl: string;
@@ -48,10 +48,10 @@ export const playAudio = createAsyncThunk<
       currentSongUrl = song.source;
     } else {
       if (!currentAudioBuffer) {
-        throw new Error("No audio buffer available");
+        throw new Error('No audio buffer available');
       }
       audioBuffer = currentAudioBuffer;
-      targetSongUrl = currentSongUrl || "Unknown";
+      targetSongUrl = currentSongUrl || 'Unknown';
     }
 
     if (currentAudioSource) {
@@ -93,7 +93,7 @@ export const playAudio = createAsyncThunk<
       duration: audioBuffer.duration,
     };
   } catch (error) {
-    throw new Error("Error playing audio:" + error);
+    throw new Error('Error playing audio:' + error);
   }
 });
 
@@ -106,7 +106,7 @@ export const pauseAudio =
       try {
         currentAudioSource.stop();
       } catch (error) {
-        throw new Error("Error pausing audio:" + error);
+        throw new Error('Error pausing audio:' + error);
       }
 
       if (currentTimeInterval) {
@@ -129,12 +129,12 @@ export const playNextSong =
   () => (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState() as { audioPlayer: IAudioPlayerState };
 
-    if (state.audioPlayer.queue.length && state.audioPlayer.queue.length>0) {
+    if (state.audioPlayer.queue.length && state.audioPlayer.queue.length > 0) {
       try {
         dispatch(playAudio(state.audioPlayer.queue[0]));
         dispatch(removeFirstFromQueue());
       } catch (error) {
-        throw new Error("Error playing next song:" + error);
+        throw new Error('Error playing next song:' + error);
       }
     }
   };
@@ -169,15 +169,15 @@ export const seekAudio = createAsyncThunk<
     state: RootState;
     rejectValue: Error;
   }
->("audioPlayer/seekAudio", (newTime, { getState, dispatch }) => {
+>('audioPlayer/seekAudio', (newTime, { getState, dispatch }) => {
   const state = getState() as { audioPlayer: IAudioPlayerState };
   const audioContext = AudioContextService.getInstance();
   const gainNode = AudioContextService.getGainNode();
-  
+
   if (currentAudioSource) {
     try {
       currentAudioSource.stop();
-    } catch (error) {}
+    } catch {}
   }
 
   if (currentTimeInterval) {
@@ -224,7 +224,7 @@ export const seekAudio = createAsyncThunk<
 });
 
 const audioPlayerSlice = createSlice({
-  name: "audioPlayer",
+  name: 'audioPlayer',
   initialState: {
     playlists: [],
     isPlaying: false,
@@ -297,7 +297,7 @@ const audioPlayerSlice = createSlice({
       if (currentAudioSource) {
         try {
           currentAudioSource.stop();
-        } catch (error) {}
+        } catch {}
         currentAudioSource = null;
         currentAudioBuffer = null;
         currentSongUrl = null;

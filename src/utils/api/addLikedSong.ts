@@ -1,24 +1,20 @@
-import { getSupabaseClient } from "../supabase";
-import { ISong } from "../../types/ISong";
+import { getSupabaseClient } from '../supabase';
+import { ISong } from '../../types/ISong';
 
-export const addLikedSong = async ({
-  albumId,
-  title,
-  authors,
-}: ISong) => {
+export const addLikedSong = async ({ albumId, title, authors }: ISong) => {
   try {
     const supabase = getSupabaseClient();
     if (!authors || authors.length === 0) {
-      throw new Error("Authors array is empty.");
+      throw new Error('Authors array is empty.');
     }
 
-    const existingRecordsPromises = authors.map(author =>
+    const existingRecordsPromises = authors.map((author) =>
       supabase
-        .from("likedSongs")
-        .select("user_id, albumId, title, authorId")
-        .eq("albumId", albumId)
-        .eq("title", title)
-        .eq("authorId", author.id)
+        .from('likedSongs')
+        .select('user_id, albumId, title, authorId')
+        .eq('albumId', albumId)
+        .eq('title', title)
+        .eq('authorId', author.id)
     );
 
     const existingRecordsResults = await Promise.all(existingRecordsPromises);
@@ -30,7 +26,7 @@ export const addLikedSong = async ({
     if (newAuthors.length === 0) {
       return {
         success: false,
-        message: "All records already exist for this song and these authors."
+        message: 'All records already exist for this song and these authors.',
       };
     }
 
@@ -41,7 +37,7 @@ export const addLikedSong = async ({
     }));
 
     const results = await Promise.all(
-      insertData.map((entry) => supabase.from("likedSongs").insert(entry))
+      insertData.map((entry) => supabase.from('likedSongs').insert(entry))
     );
 
     results.forEach(({ error }, index) => {
@@ -56,9 +52,9 @@ export const addLikedSong = async ({
       success: true,
       message: `Liked song${newAuthors.length > 1 ? 's' : ''} added successfully.`,
       addedAuthors: newAuthors.length,
-      skippedAuthors: authors.length - newAuthors.length
+      skippedAuthors: authors.length - newAuthors.length,
     };
   } catch (error) {
-    throw new Error("There was a problem adding liked song. " + error);
+    throw new Error('There was a problem adding liked song. ' + error);
   }
 };

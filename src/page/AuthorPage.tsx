@@ -1,9 +1,9 @@
-import { Link, useLoaderData } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { IAuthor } from "../types/IAuthor";
-import { Spinner } from "../components/ui/spinner";
-import { IAlbum } from "../types/IAlbum";
-import { getAlbumsFromAuthor } from "../utils/api/getAlbumsFromAuthor";
+import { Link, useLoaderData } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { IAuthor } from '../types/IAuthor';
+import { Spinner } from '../components/ui/spinner';
+import { IAlbum } from '../types/IAlbum';
+import { getAlbumsFromAuthor } from '../utils/api/getAlbumsFromAuthor';
 
 const AuthorPage = () => {
   const [albums, setAlbums] = useState<IAlbum[]>();
@@ -16,7 +16,7 @@ const AuthorPage = () => {
       const fetchedAlbums = await getAlbumsFromAuthor(author.id);
       setAlbums(fetchedAlbums);
     } catch (error) {
-      throw new Error("There was a problem fetching albums. " + error);
+      throw new Error('There was a problem fetching albums. ' + error);
     }
   };
 
@@ -77,9 +77,9 @@ const AuthorPage = () => {
                       </h1>
                       <h3 className="text-gray-400">{`${new Date(
                         album.createdAt
-                      ).toLocaleString("en-US", {
-                        month: "long",
-                        year: "numeric",
+                      ).toLocaleString('en-US', {
+                        month: 'long',
+                        year: 'numeric',
                       })}`}</h3>
                     </Link>
                   </div>
