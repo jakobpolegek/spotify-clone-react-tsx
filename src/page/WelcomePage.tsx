@@ -7,7 +7,7 @@ const WelcomePage = () => {
       <p className="text-2xl font-bold">
         Before using this app, you need to<br></br>&nbsp;
         <SignInButton>
-          <button>sign in.</button>
+          <button className="underline">sign in.</button>
         </SignInButton>
       </p>
     </div>
